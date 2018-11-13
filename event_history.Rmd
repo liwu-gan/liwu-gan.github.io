@@ -49,6 +49,23 @@ This chapter makes use of two different datasets: data on the duration of UN pea
 
 
 
+
+# The Cox Proportional Hazards Model 
+
+This chapter makes use of the cabinet data used in the previous chapter. 
+
+## Cabinet Data in R
+
+```{r, child = 'chapter4/ch4_cabinet.rmd'}
+
+```
+
+## Cabinet Data in Stata
+
+```{r, child = 'chapter4/ch4_cabinet_stata.rmd'}
+
+```
+
 ```{r include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(

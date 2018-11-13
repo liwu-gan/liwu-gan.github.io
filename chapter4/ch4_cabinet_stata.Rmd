@@ -1,0 +1,216 @@
+---
+title: 'Chapter 4: Cabinet Data in Stata'
+output: html_document
+
+---
+
+```{r, eval = FALSE, echo = FALSE}
+
+clear
+set more off
+
+/* Dataset is cabinet.dta */
+
+use "~/Dropbox/github/liwu-gan.github.io/dta/cabinet.dta"
+
+
+```
+
+### Table 4.4
+
+We estimate the Cox model in four different ways, one for each method of ties.
+
+```{r, eval = FALSE}
+
+eststo clear
+
+* Breslow Method (Stata default)
+eststo: stcox  invest polar numst format postelec caretakr, nohr breslow
+
+* Efron Method
+eststo: stcox  invest polar numst format postelec caretakr, nohr efron
+
+* Averaged Likelihood
+eststo: stcox  invest polar numst format postelec caretakr, nohr exactm
+
+* Exact Discrete
+eststo: stcox  invest polar numst format postelec caretakr, nohr exactp
+
+```
+
+Now we can format the results into one table. 
+
+```{r, eval  = FALSE}
+
+* Reset working directory to collect following output 
+
+cd ~/Dropbox/event_history/rmd
+
+* Generate regression table output 
+
+esttab using ch4_cox.html, replace ///
+	coeflabel(invest "Investiture" polar "Polarization" numst "Majority" ///
+	format "Formation" postelec "Post-Election" caretakr "Caretaker" ///
+	_cons "Constant") ///
+	title(Cox Model of Cabinet Durations) ///
+	mtitles("Breslow" "Efron" "Avg. Lik." "Exact") ///
+	eqlabels("", none) ///
+	b(2) se(2) nostar ///
+	stats(ll N, label("Log-Likelihood" "<em>N</em>") fmt(2 0)) 
+	
+eststo clear
+
+```
+![](~/Dropbox/github/liwu-gan.github.io/chapter4/ch4_cox.png){}
+
+
+### Table 4.5
+
+We want to compare the Cox model using the averaged likelihood approximation with the Weibull proportional hazards model. 
+
+```{r, eval = FALSE}
+
+*Averaged Likelihood*
+eststo: stcox  invest polar numst format postelec caretakr, nohr exactm
+
+
+*Weibull*
+eststo: streg  invest polar numst format postelec caretakr, dist(weib) nohr 
+```
+
+Again, we can format the results into a table.
+
+```{r, eval = FALSE}
+
+* Generate regression table output 
+
+esttab using ch4_cox_weib.html, replace ///
+	coeflabel(invest "Investiture" polar "Polarization" numst "Majority" ///
+	format "Formation" postelec "Post-Election" caretakr "Caretaker" ///
+	_cons "Constant") ///
+	title(Cox and Weibull Estimates of Cabinet Durations) ///
+	mtitles("Cox" "Weibull") ///
+	eqlabels("", none) ///
+	b(2) se(2) nostar ///
+	stats(ll N, label("Log-Likelihood" "<em>N</em>") fmt(2 0)) nogaps
+	
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter4/ch4_cox_weib.png){}
+
+
+### Figure 4.1
+
+In preparation for the plots, we mean center the polarization and
+formation attempts covariates.
+
+```{r, eval = FALSE}
+
+```{r, eval = FALSE}
+
+* To obtain a natural 0 point on the covariates, we mean center the polarization and formation attempts covariates.  We do this using Stata's extension generator function:
+
+egen meanpolar=mean(polar)
+egen meanform=mean(format)
+
+* Now we mean center these two variables:
+
+gen polarmean=polar-meanpolar
+gen formmean=format-meanform
+
+```
+
+Using the mean centered variables, we run the Cox and Weibull models that sill serve as the foundation for our plots. When we run the Cox model, we can immediately generate the baseline survivor, integrated hazard, and hazard functions. 
+
+```{r, eval = FALSE}
+
+
+* Estimate Cox model. The last three commands  in the stcox statement produce the estimates of the baseline functions, which we can graph.
+
+stcox invest polarmean numst formmean postelec caretakr, nohr exactm basech(inthaz) basehc(haz) basesurv(surv)
+
+predict hr, hr
+
+* which is exp(xb)
+
+*To compute the survivor function for each observation we generate new variable:
+
+gen surv_i=surv^hr
+
+* Weibull model
+
+streg invest polarmean numst formmean postelec caretakr, dist(weib)  time
+
+```
+
+Now we can generate the baseline survivor, integrated hazard, and hazard functions from the Weibull model.
+
+```{r, eval = FALSE}
+* Estimate the baseline survivor function from the Weibull
+
+* First create lambda
+
+gen lambda_base=exp(-(_b[_cons]))
+
+*Second, note that S(t)=exp^-(lambda*t)^p.  We can generate the survivor functions for the baseline case:
+
+gen surv_baseweib=exp(-(lambda_base*durat)^e(aux_p))
+
+* Now we generate the "baseline hazard" from the Weibull
+
+* Note that h(t)=lambda*p*(lambda*t)^(p-1).  We can generate the hazard rate for the "baseline case."
+
+gen haz_baseweib=lambda_base*e(aux_p)*(lambda_base*durat)^(e(aux_p)-1)
+
+*The baseline integrated hazard is thus H(t)=-log(S(t))
+
+gen inthaz_baseweib=-log(surv_baseweib)
+
+```
+
+We can graph each of the three functions from the Cox and Weibull Models
+
+```{r, eval = FALSE}
+
+*Graph the baseline functions from the Cox and Weibull Models
+
+twoway (line surv durat, sort connect(stairstep)) (line surv_baseweib durat, sort lpattern(solid)), ///
+	legend(off) ///
+	xtitle("Cabinet Duration") ///
+	title("Baseline Survivor Function", position(11)) ///
+	scheme(s2mono) graphregion(color(white) icolor(none)) ///
+	saving(cabcoxst.gph, replace)
+
+* Graph the baseline integrated hazard from the Cox and Weibull Models
+
+twoway (line inthaz durat, sort connect(stairstep)) (line inthaz_baseweib durat, sort lpattern(solid)), ///
+	legend(off) ///
+	xtitle("Cabinet Duration") ///
+	title("Baseline Integrated Hazard Function", position(11)) ///
+	scheme(s2mono) graphregion(color(white) icolor(none)) ///
+	saving(cabcoxinthaz.gph, replace)
+
+*Graph the baseline hazard from the Cox and Weibull Models
+
+twoway (line haz durat, sort connect(stairstep)) (line haz_baseweib durat, sort lpattern(solid)), ///
+	legend(off) ///
+	xtitle("Cabinet Duration") ///
+	title("Baseline Hazard Function", position(11)) ///
+	scheme(s2mono) graphregion(color(white) icolor(none)) ///
+	saving(cabcoxht.gph, replace)
+	
+```
+
+Now we can combine all three graphs and export to a .png file
+
+```{r, eval = FALSE}
+
+graph combine cabcoxst.gph cabcoxinthaz.gph cabcoxht.gph, graphregion(color(white) ///
+icolor(none)) saving(cabcoxbase.gph, replace)
+
+graph export cabcoxbase.png, replace
+
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter4/cabcoxbase.png){
+}
