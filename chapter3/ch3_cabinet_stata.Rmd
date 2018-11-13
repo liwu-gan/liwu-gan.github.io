@@ -1,0 +1,65 @@
+---
+title: 'Chapter 3: Cabinet Data in Stata'
+output: html_document
+---
+
+```{r, eval = FALSE, echo = FALSE}
+
+clear
+set more off
+
+cd ~/Dropbox/event_history/dta
+
+```
+
+Let's load the dataset. 
+```{r, eval = FALSE}
+
+/* Dataset is cabinet.dta */
+
+use "~/Dropbox/github/liwu-gan.github.io/dta/cabinet.dta"
+
+
+```
+
+
+### Table 3.3
+
+We estimate the generalized gamma and Weibull models, and store the results. 
+```{r, eval = FALSE}
+* Estimate generalized gamma model
+
+eststo clear
+
+eststo: streg invest polar numst format postelec caretakr, dist(ggamma) time
+
+* Estimate weibull model 
+
+eststo: streg invest polar numst format postelec caretakr, dist(weib) time
+
+```
+
+We can generate the results in a table now. 
+
+```{r, eval = FALSE}
+* Reset working directory to collect following output 
+
+cd ~/Dropbox/event_history/rmd
+
+* Generate regression table output 
+
+esttab using ch3_gg_weib.html, replace ///
+	coeflabel(	_t:invest "Investiture" _t:polar "Polarization" _t:numst "Majority" ///
+				_t:format "Formation" _t:postelec "Post-Election" _t:caretakr "Caretaker" ///
+				_t:_cons "Constant") ///
+	title(Generalized Gamma Model of Cabinet Durations) ///
+	mtitles("Generalized Gamma" "Weibull") ///
+	eqlabels("", none) ///
+	b(2) se(2) nostar ///
+	stats(ll N, label("Log-Likelihood" "<em>N</em>") fmt(2 0)) nogaps
+
+```
+
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter3/ch3_gg_weib.png){}
+

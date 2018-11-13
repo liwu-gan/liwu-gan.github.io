@@ -1,0 +1,258 @@
+---
+title: "Chapter 3: UN Peacekeeping Data in R"
+output: html_document
+---
+
+```{r, include = FALSE}
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+```
+
+Let's load the packages we will need and the UN dataset. Be sure to set the working directory to 
+
+```{r, message = FALSE, warning = FALSE}
+
+#---- Packages 
+library(foreign)
+library(survival)
+library(survminer)
+library(flexsurv)
+library(texreg)
+library(ggplot2)
+library(SurvRegCensCov)
+```
+
+```{r, message = FALSE, warning = FALSE}
+
+#-------Dataset
+un <- read.dta("~/Dropbox/github/liwu-gan.github.io/dta/UNFINAL.dta")
+
+```
+
+We create the survival object for our dependent variable, using the syntax Surv(time, event).
+
+```{r, message=FALSE, warning=FALSE}
+
+#--------Data prepation
+
+dv <- Surv(un$'_t', un$'_d')
+
+```
+
+### Table 3.1 
+
+First we run the exponential and Weibull A.F.T models
+```{r}
+# Exponential Model
+
+exp_mod <- survreg(dv ~ civil + interst, data = un, dist = "exp")
+
+# Weibull A.F.T
+
+weib_mod <- survreg(dv ~ civil + interst, data = un, dist = "weib")
+
+
+```
+
+The Weibull Prop. Hazards model is a little more involved to run, because the default in R is the accelerated failure time (A.F.T.) parameterization. To convert the Weibull A.F.T. to Prop. Hazards, we will use the ConvertWeibull function. Because this function does not calculate the intercept or standard errors, however, we will first have to create an intercept term manually by entering a vector of 1s in the dataset. We will then enter the intercept term as a covariate in the model. 
+
+```{r}
+intercept <- rep(1,58)
+
+un$intercept <- intercept
+```
+
+We run the Weibull A.F.T models with this intercept term. The ConvertWeibull function will drop the first term so we have to two identical models with the terms ordered differently to get the conversions for all the variables. 
+
+```{r}
+
+weib_mod1 <- survreg(dv ~ 0 + civil + intercept + interst, data = un)
+
+weib_mod2 <- survreg(dv ~ 0 + intercept + civil + interst, data = un)
+
+weib_mod1_ph <- ConvertWeibull(weib_mod1)
+
+weib_mod2_ph <- ConvertWeibull(weib_mod2)
+
+
+```
+
+
+We can extract the coefficients and standard errors from these two models, and delete the redundant rows. 
+
+```{r}
+#Extract the coefficients and standard errors
+
+weib_ph <- rbind(weib_mod1_ph$vars, weib_mod2_ph$vars)
+
+# Delete rows that are redundant/unnecessary 
+weib_ph <- weib_ph[-c(1,2,5,8),]
+
+weib_ph <- weib_ph[c("intercept", "civil", "interst", "gamma"),]
+
+weib_ph
+```
+
+
+```{r, include = FALSE}
+# Write function to customize model output for all three models 
+
+tex_reg_converter <- function(original_model){
+  
+  
+  coefficient.names <- c("Constant", "Civil War", "Interstate Conflict")
+  coefficients <- original_model$coef 
+  se <- sqrt(diag(vcov(original_model)))
+  shape <- original_model$scale
+  n <- 54
+  lik <- logLik(original_model)
+  gof <- c(shape, lik, n)
+  gof.names <- c("Shape Parameter", "Log Likelihood", "N" )
+  decimal.places <- c(TRUE, TRUE, FALSE)
+  
+  createTexreg(
+    coef.names = coefficient.names, coef = coefficients, se = se,
+    gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+  
+}
+
+
+# Use this function for exponential
+
+exp_mod <- tex_reg_converter(exp_mod)
+
+
+# Manually create texreb object for Weibull A.F.T.
+
+coefficient.names <- c("Constant", "Civil War", "Interstate Conflict")
+coefficients <- weib_mod$coef 
+se <- c(.27, .45, .62)
+shape <- weib_mod$scale
+n <- 54
+lik <- logLik(weib_mod)
+gof <- c(shape, lik, n)
+gof.names <- c("Shape Parameter", "Log Likelihood", "N" )
+decimal.places <- c(TRUE, TRUE, FALSE)
+
+weib_mod_aft <- createTexreg(
+  coef.names = coefficient.names, coef = coefficients, se = se,
+  gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+
+
+# Manually texreg object for WeibulL P.H.
+
+coefficient.names <- c("Constant", "Civil War", "Interstate Conflict")
+coefficients <- c(-3.46, .89, -1.4)
+se <- c(.50, .38, .51)
+shape <- .81
+n <- 54
+lik <- logLik(weib_mod)
+gof <- c(shape, lik, n)
+gof.names <- c("Shape Parameter", "Log Likelihood", "N" )
+decimal.places <- c(TRUE, TRUE, FALSE)
+
+weib_mod_ph <- createTexreg(
+  coef.names = coefficient.names, coef = coefficients, se = se,
+  gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+
+
+# Put tables all together
+htmlreg(list(exp_mod, weib_mod_aft, weib_mod_ph), stars = c(), caption = "Weibull Model of U.N. Peacekeeping Missions", caption.above = TRUE, custom.model.names = c("Exponential Model", "Weibull A.F.T.", "Weibull Prop. Hazards"), center = FALSE, single.row = TRUE)
+```
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">Weibull Model of U.N. 
+        Peacekeeping Missions</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b></b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b>Exponential Model</b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b>Weibull A.F.T.</b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b>Weibull Prop. Hazards</b></th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Constant</td>
+<td style="padding-right: 12px; border: none;">4.35 (0.21)</td>
+<td style="padding-right: 12px; border: none;">4.29 (0.27)</td>
+<td style="padding-right: 12px; border: none;">-3.46 (0.50)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Civil War</td>
+<td style="padding-right: 12px; border: none;">-1.17 (0.36)</td>
+<td style="padding-right: 12px; border: none;">-1.10 (0.45)</td>
+<td style="padding-right: 12px; border: none;">0.89 (0.38)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Interstate Conflict</td>
+<td style="padding-right: 12px; border: none;">1.64 (0.50)</td>
+<td style="padding-right: 12px; border: none;">1.74 (0.62)</td>
+<td style="padding-right: 12px; border: none;">-1.40 (0.51)</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">Shape Parameter</td>
+<td style="border-top: 1px solid black;">1.00</td>
+<td style="border-top: 1px solid black;">1.24</td>
+<td style="border-top: 1px solid black;">0.81</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Log Likelihood</td>
+<td style="padding-right: 12px; border: none;">-202.85</td>
+<td style="padding-right: 12px; border: none;">-201.15</td>
+<td style="padding-right: 12px; border: none;">-201.15</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">N</td>
+<td style="border-bottom: 2px solid black;">54</td>
+<td style="border-bottom: 2px solid black;">54</td>
+<td style="border-bottom: 2px solid black;">54</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="5"><span style="font-size:0.8em"></span></td>
+</tr>
+</table>
+
+### Figure 3.1 
+
+
+
+```{r}
+# Using the Weibull A.F.T. model we ran earlier, we first calculate lambda for each conflict type, using the fact that lambda = exp(-beta'x)
+lambda_civil = unname(exp(-(weib_mod$coef[1] + weib_mod$coef[2])))
+
+lambda_interst = unname(exp(-(weib_mod$coef[1] + weib_mod$coef[3])))
+
+lambda_icw <- unname(exp(-(weib_mod$coef[1])))
+
+```
+
+```{r}
+# We can generate the hazard rate for each covariate profile, knowing that h(t) = 
+# lambda * p * (lambda * t)^(p-1)
+
+p <- 1/weib_mod$scale
+t <- un$'_t'
+
+hazard_civil <- lambda_civil * p * (lambda_civil * t)^(p-1)
+
+hazard_interstate <- lambda_interst * p * (lambda_interst * t)^(p-1)
+
+hazard_icw <- lambda_icw * p * (lambda_icw * t)^(p-1)
+
+```
+```{r, warning = FALSE}
+#Plot hazard rates
+
+ggplot(data = un, aes(x = t)) + 
+  #geom_point(aes(y = hazard_civil)) +
+  geom_line(aes(y = hazard_civil, colour = "Civil War")) +
+  #geom_point(aes(y = hazard_interstate)) +
+  geom_line(aes(y = hazard_interstate, colour = "Interstate Conflict")) +
+  #geom_point(aes(y = hazard_icw)) +
+  geom_line(aes(y = hazard_icw, colour = "Internationalized Civil War")) +
+  theme_bw() +
+  ylab(label = "Hazard Rates") +  xlab("Duration of U.N. Peacekeeping Missions") +
+  labs(colour = "Type of Conflict") +
+  ggtitle("Weibull Hazard Rates by Type of Conflict")
+
+```

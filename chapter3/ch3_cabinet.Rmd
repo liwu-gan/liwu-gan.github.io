@@ -1,0 +1,179 @@
+---
+#title: "Event History Data Examples in R"
+title: "Chapter 3: Cabinet Data in R"
+output: html_document
+#toc: TRUE
+#toc_float: TRUE
+#number_sections: TRUE
+
+---
+
+```{r, include = FALSE}
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+```
+
+```{r, include = FALSE}
+
+#---- Packages 
+library(foreign)
+library(survival)
+library(survminer)
+library(flexsurv)
+library(texreg)
+library(ggplot2)
+library(SurvRegCensCov)
+
+```
+
+We begin by opening the cabinet dataset. 
+
+```{r, message = FALSE, warning = FALSE}
+
+#-------Dataset
+cabinet <- read.dta("~/Dropbox/github/liwu-gan.github.io/dta/cabinet.dta")
+
+```
+
+We create the survival object for our dependent variable, using the syntax Surv(time, event).
+
+```{r, message=FALSE, warning=FALSE}
+
+#--------Data prepation
+
+dv <- Surv(cabinet$durat, cabinet$'_d')
+
+```
+
+### Table 3.3
+
+We run the Generalized Gamma and Weibull models.  
+
+```{r}
+
+# Generalized Gamma model 
+
+gg_mod <- flexsurvreg(dv ~invest + polar + numst + format + postelec + caretakr,
+                      data = cabinet, dist = "gengamma")
+
+
+# Weibull model 
+
+weib_mod <- survreg(dv ~invest + polar + numst + format + postelec + caretakr,
+                  data = cabinet)
+```
+
+```{r, include = FALSE}
+
+# Create texreg object for generalized gamma model 
+
+  coefficient.names <- c("Constant", "Investiture", "Polarization", "Majority",
+                         "Formation", "Post-Election", "Caretaker")
+  coefficients <- c(2.96, -.30, -.02, .47, -.10, .68, -1.33)
+  se <- c(.14, .11, .01, .10, .03, .11, .21)
+  shape <- .79
+  scale <- .92
+  n <- 314
+  lik <- logLik(gg_mod)
+  gof <- c(shape, scale, lik, n)
+  gof.names <- c("Shape Parameter", "Scale Parameter", "Log Likelihood", "N" )
+  decimal.places <- c(TRUE, TRUE, TRUE, FALSE)
+  
+  gg_mod <- createTexreg(
+    coef.names = coefficient.names, coef = coefficients, se = se,
+    gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+  
+
+# Create texreg object for weibull model 
+
+  coefficient.names <- c("Constant", "Investiture", "Polarization", "Majority",
+                         "Formation", "Post-Election", "Caretaker")
+  coefficients <- weib_mod$coef 
+  se <- c(.13, .11, .01, .10, .03, .10, .20)
+  shape <- weib_mod$scale
+  n <- 314
+  lik <- logLik(weib_mod)
+  gof <- c(shape, lik, n)
+  gof.names <- c("Shape Parameter", "Log Likelihood", "N" )
+  decimal.places <- c(TRUE, TRUE, FALSE)
+  
+ weib_mod <-  createTexreg(
+    coef.names = coefficient.names, coef = coefficients, se = se,
+    gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+  
+ 
+ htmlreg(list(gg_mod, weib_mod), stars = c(), caption = "Generalized Gamma Model of 
+         Cabinet Durations", caption.above = TRUE, custom.model.names = c("Generalized Gamma", "Weibull"), center = FALSE, single.row = TRUE)
+```
+ 
+Let's compare the results of our models. 
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">Generalized Gamma Model of 
+         Cabinet Durations</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b></b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b>Generalized
+        Gamma</b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b>Weibull</b></th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Constant</td>
+<td style="padding-right: 12px; border: none;">2.96 (0.14)</td>
+<td style="padding-right: 12px; border: none;">2.99 (0.13)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Investiture</td>
+<td style="padding-right: 12px; border: none;">-0.30 (0.11)</td>
+<td style="padding-right: 12px; border: none;">-0.30 (0.11)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Polarization</td>
+<td style="padding-right: 12px; border: none;">-0.02 (0.01)</td>
+<td style="padding-right: 12px; border: none;">-0.02 (0.01)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Majority</td>
+<td style="padding-right: 12px; border: none;">0.47 (0.10)</td>
+<td style="padding-right: 12px; border: none;">0.46 (0.10)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Formation</td>
+<td style="padding-right: 12px; border: none;">-0.10 (0.03)</td>
+<td style="padding-right: 12px; border: none;">-0.10 (0.03)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Post-Election</td>
+<td style="padding-right: 12px; border: none;">0.68 (0.11)</td>
+<td style="padding-right: 12px; border: none;">0.68 (0.10)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Caretaker</td>
+<td style="padding-right: 12px; border: none;">-1.33 (0.21)</td>
+<td style="padding-right: 12px; border: none;">-1.33 (0.20)</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">Shape Parameter</td>
+<td style="border-top: 1px solid black;">0.79</td>
+<td style="border-top: 1px solid black;">0.77</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Scale Parameter</td>
+<td style="padding-right: 12px; border: none;">0.92</td>
+<td style="padding-right: 12px; border: none;"></td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Log Likelihood</td>
+<td style="padding-right: 12px; border: none;">-1014.55</td>
+<td style="padding-right: 12px; border: none;">-1014.62</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">N</td>
+<td style="border-bottom: 2px solid black;">314</td>
+<td style="border-bottom: 2px solid black;">314</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="4"><span style="font-size:0.8em"></span></td>
+</tr>
+</table>

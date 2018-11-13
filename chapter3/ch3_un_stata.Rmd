@@ -1,0 +1,114 @@
+---
+title: "Chapter 3: UN Peacekeeping Data in Stata"
+output: html_document
+---
+
+```{r, include = FALSE}
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+```
+
+```{r, eval = FALSE, echo = FALSE}
+
+clear
+set more off
+
+```
+
+Let's load the dataset.
+```{r, eval = FALSE}
+
+/* Dataset is UNFINAL.DTA */
+
+use "~/Dropbox/github/liwu-gan.github.io/dta/UNFINAL.dta"
+
+```
+
+### Table 3.1 
+
+We can estimate and store each of the following models: exponential, Weibull A.F.T., and Weibull Prop. Hazards. 
+
+```{r, eval = FALSE}
+
+eststo clear
+
+* Exponential model 
+
+eststo: streg civil interst, dist(exp) time 
+
+* Weibull model using accelerated failure time
+
+eststo: streg civil interst, dist(weib) nohr 
+
+* Weibull model using proportional hazards
+
+eststo: streg civil interst, dist(weib) time 
+
+```
+
+Now we can generate the regression table for the three models. 
+
+```{r, eval = FALSE}
+
+* Reset working directory to collect following output 
+
+cd ~/Dropbox/event_history/rmd
+
+* Generate regression table output 
+
+esttab using ch3_exp_weib.html, replace ///
+	coeflabel(	_t:civil "Civil War" 	_t:interst "Interstate Conflict" ///
+				_t:_cons "Constant") ///
+	title(Weibull Model of U.N. Peacekeeping Missions) ///
+	mtitles("Exponential Model" "Weibull A.F.T." "Weibull Prop. Hazards") ///
+	eqlabels("", none) ///
+	b(2) se(2) nostar ///
+	stats(ll N, label("Log-Likelihood" "<em>N</em>") fmt(2 0)) 
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter3/ch3_exp_weib.png){
+}
+
+### Figure 3.1
+
+We generate hazard rates for each conflict type from the Weibull P.H. model. 
+```{r, eval = FALSE}
+
+*Weibull Model with P.H. Parameterization
+
+streg civil interst, dist(weib) time
+
+* First, note that lambda=exp(-beta'x). We can compute lambda for each conflict type:
+
+gen lambda_civil=exp(-(_b[_cons]+_b[civil]))
+gen lambda_interstate=exp(-(_b[_cons]+_b[interst]))
+gen lambda_icw=exp(-(_b[_cons]))
+
+* Second, note that h(t)=lambda*p*(lambda*t)^(p-1).  We can generate the hazard rate for each covariate profile:
+  
+gen haz_civil=lambda_civil*e(aux_p)*(lambda_civil*duration)^(e(aux_p)-1)
+gen haz_interstate=lambda_interstate*e(aux_p)*(lambda_interstate*duration)^(e(aux_p)-1)
+gen haz_icw=lambda_icw*e(aux_p)*(lambda_icw*duration)^(e(aux_p)-1)
+
+```
+
+We are now ready to plot the hazard rates.
+
+```{r, eval = FALSE}
+
+twoway (line haz_civil duration, sort lpattern(solid) lcolor(red)) (line haz_icw duration, sort lpattern(solid) lcolor(green)) ///
+	(line haz_interstate duration, sort lpattern(solid) lcolor(blue)), ///
+	legend(pos(3) col(1) ring(0) ///
+	lab(1 "Civil War") lab(2 "Internationalized Civil War") lab(3 "Interstate Conflict")) ///
+	xtitle("Duration of U.N. Peacekeeping Missions") ///
+	title("Hazard Rates", position (11)) ///
+	scheme(s2mono) graphregion(color(white) icolor(none)) ///
+	saving(cabcoxinthaz.gph, replace)
+
+* Export graph as .png file.
+
+graph export UNweibhaz.png, replace
+
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter3/UNweibhaz.png){}
