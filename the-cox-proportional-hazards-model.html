@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Event History Modeling: A Guide for Social Scientists</title>
+  <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook.">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Event History Modeling: A Guide for Social Scientists" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Event History Modeling: A Guide for Social Scientists" />
+  
+  <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+<meta name="author" content="Janet M. Box-Steffensmeier, Bradford S. Jones, David Darmofal">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="parametric-models-for-single-spell-duration-data.html">
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="event-history-and-social-science.html"><a href="event-history-and-social-science.html"><i class="fa fa-check"></i><b>1</b> Event History and Social Science</a></li>
+<li class="chapter" data-level="2" data-path="the-logic-of-event-history-analysis.html"><a href="the-logic-of-event-history-analysis.html"><i class="fa fa-check"></i><b>2</b> The Logic of Event History Analysis</a></li>
+<li class="chapter" data-level="3" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html"><i class="fa fa-check"></i><b>3</b> Parametric Models for Single-Spell Duration Data</a><ul>
+<li class="chapter" data-level="3.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#un-data-in-r"><i class="fa fa-check"></i><b>3.1</b> UN Data in R</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.1"><i class="fa fa-check"></i><b>3.1.1</b> Table 3.1</a></li>
+<li class="chapter" data-level="3.1.2" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#figure-3.1"><i class="fa fa-check"></i><b>3.1.2</b> Figure 3.1</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#un-data-in-stata"><i class="fa fa-check"></i><b>3.2</b> UN Data in Stata</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.1-1"><i class="fa fa-check"></i><b>3.2.1</b> Table 3.1</a></li>
+<li class="chapter" data-level="3.2.2" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#figure-3.1-1"><i class="fa fa-check"></i><b>3.2.2</b> Figure 3.1</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#cabinet-data-in-r"><i class="fa fa-check"></i><b>3.3</b> Cabinet Data in R</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.3"><i class="fa fa-check"></i><b>3.3.1</b> Table 3.3</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#cabinet-data-in-stata"><i class="fa fa-check"></i><b>3.4</b> Cabinet Data in Stata</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.3-1"><i class="fa fa-check"></i><b>3.4.1</b> Table 3.3</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html"><i class="fa fa-check"></i><b>4</b> The Cox Proportional Hazards Model</a><ul>
+<li class="chapter" data-level="4.1" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#cabinet-data-in-r-1"><i class="fa fa-check"></i><b>4.1</b> Cabinet Data in R</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.4"><i class="fa fa-check"></i><b>4.1.1</b> Table 4.4</a></li>
+<li class="chapter" data-level="4.1.2" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.5"><i class="fa fa-check"></i><b>4.1.2</b> Table 4.5</a></li>
+<li class="chapter" data-level="4.1.3" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#figure-4.1"><i class="fa fa-check"></i><b>4.1.3</b> Figure 4.1</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#cabinet-data-in-stata-1"><i class="fa fa-check"></i><b>4.2</b> Cabinet Data in Stata</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.4-1"><i class="fa fa-check"></i><b>4.2.1</b> Table 4.4</a></li>
+<li class="chapter" data-level="4.2.2" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.5-1"><i class="fa fa-check"></i><b>4.2.2</b> Table 4.5</a></li>
+<li class="chapter" data-level="4.2.3" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#figure-4.1-1"><i class="fa fa-check"></i><b>4.2.3</b> Figure 4.1</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Event History Modeling: A Guide for Social Scientists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="the-cox-proportional-hazards-model" class="section level1">
+<h1><span class="header-section-number">4</span> The Cox Proportional Hazards Model</h1>
+<p>This chapter makes use of the cabinet data used in the previous chapter.</p>
+<div id="cabinet-data-in-r-1" class="section level2">
+<h2><span class="header-section-number">4.1</span> Cabinet Data in R</h2>
+<div id="table-4.4" class="section level3">
+<h3><span class="header-section-number">4.1.1</span> Table 4.4</h3>
+<p>First, we run each of the models.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Run Cox model with the Breslow approximation</span>
+b_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>invest <span class="op">+</span><span class="st"> </span>polar <span class="op">+</span><span class="st"> </span>numst <span class="op">+</span><span class="st"> </span>format <span class="op">+</span><span class="st"> </span>postelec <span class="op">+</span><span class="st"> </span>caretakr,
+               <span class="dt">data =</span> cabinet, <span class="dt">ties =</span> <span class="st">&quot;breslow&quot;</span>)
+
+<span class="co"># Run Cox model with the Efron approximation</span>
+
+ef_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>invest <span class="op">+</span><span class="st"> </span>polar <span class="op">+</span><span class="st"> </span>numst <span class="op">+</span><span class="st"> </span>format <span class="op">+</span><span class="st"> </span>postelec <span class="op">+</span><span class="st"> </span>caretakr,
+                <span class="dt">data =</span> cabinet)
+
+<span class="co"># Run Cox model with the Exact Discrete apprximation </span>
+
+ed_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>invest <span class="op">+</span><span class="st"> </span>polar <span class="op">+</span><span class="st"> </span>numst <span class="op">+</span><span class="st"> </span>format <span class="op">+</span><span class="st"> </span>postelec <span class="op">+</span><span class="st"> </span>caretakr,
+                <span class="dt">data =</span> cabinet, <span class="dt">ties =</span> <span class="st">&quot;exact&quot;</span>)</code></pre></div>
+<p>Here is the output, with the standard errors in parentheses:</p>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">
+Cox Model of Cabinet Durations
+</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b></b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Breslow</b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Efron</b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Exact</b>
+</th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Investiture
+</td>
+<td style="padding-right: 12px; border: none;">
+0.38 (0.14)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.39 (0.14)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.41 (0.14)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Polarization
+</td>
+<td style="padding-right: 12px; border: none;">
+0.02 (0.01)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.02 (0.01)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.02 (0.01)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Majority
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.57 (0.13)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.58 (0.13)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.62 (0.14)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Formation
+</td>
+<td style="padding-right: 12px; border: none;">
+0.13 (0.04)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.13 (0.04)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.13 (0.05)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Post-Election
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.83 (0.14)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.86 (0.14)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.88 (0.15)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Caretaker
+</td>
+<td style="padding-right: 12px; border: none;">
+1.54 (0.28)
+</td>
+<td style="padding-right: 12px; border: none;">
+1.71 (0.28)
+</td>
+<td style="padding-right: 12px; border: none;">
+1.86 (0.33)
+</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">
+Log Likelihood
+</td>
+<td style="border-top: 1px solid black;">
+-1299.89
+</td>
+<td style="border-top: 1px solid black;">
+-1287.74
+</td>
+<td style="border-top: 1px solid black;">
+-918.29
+</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">
+N
+</td>
+<td style="border-bottom: 2px solid black;">
+314
+</td>
+<td style="border-bottom: 2px solid black;">
+314
+</td>
+<td style="border-bottom: 2px solid black;">
+314
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="5">
+<span style="font-size:0.8em"></span>
+</td>
+</tr>
+</table>
+</div>
+<div id="table-4.5" class="section level3">
+<h3><span class="header-section-number">4.1.2</span> Table 4.5</h3>
+<p>Let’s compare the Cox Efron approximation with the Weibull proportional hazards.</p>
+<p>To convert from the A.F.T. to Prop. Hazards parameterization, we will use the ConvertWeibull function from Chap. 3. We will prepare the data the same way we did in Chap. 3.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">intercept &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">314</span>)
+
+cabinet<span class="op">$</span>intercept &lt;-<span class="st"> </span>intercept
+
+weib_mod1 &lt;-<span class="st"> </span><span class="kw">survreg</span>(dv <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>intercept <span class="op">+</span><span class="st"> </span>invest <span class="op">+</span><span class="st"> </span>polar <span class="op">+</span><span class="st"> </span>numst<span class="op">+</span><span class="st"> </span>format <span class="op">+</span><span class="st"> </span>postelec
+                     <span class="op">+</span><span class="st"> </span>caretakr, <span class="dt">data =</span> cabinet)
+
+weib_mod2 &lt;-<span class="st"> </span><span class="kw">survreg</span>(dv <span class="op">~</span><span class="st"> </span><span class="dv">0</span>  <span class="op">+</span><span class="st"> </span>invest <span class="op">+</span><span class="st"> </span>intercept <span class="op">+</span><span class="st"> </span>polar <span class="op">+</span><span class="st"> </span>numst<span class="op">+</span><span class="st"> </span>format <span class="op">+</span><span class="st"> </span>postelec
+                     <span class="op">+</span><span class="st"> </span>caretakr, <span class="dt">data =</span> cabinet)
+
+weib_mod1_ph &lt;-<span class="st"> </span><span class="kw">ConvertWeibull</span>(weib_mod1)
+
+weib_mod2_ph &lt;-<span class="st"> </span><span class="kw">ConvertWeibull</span>(weib_mod2)
+
+weib_ph &lt;-<span class="st"> </span><span class="kw">rbind</span>(weib_mod1_ph<span class="op">$</span>vars, weib_mod2_ph<span class="op">$</span>vars)
+
+
+<span class="co"># Delete rows that are redundant/unnecessary </span>
+weib_ph &lt;-<span class="st"> </span>weib_ph[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">9</span>,<span class="dv">12</span>,<span class="dv">13</span>,<span class="dv">14</span>,<span class="dv">15</span>,<span class="dv">16</span>),]
+
+weib_ph &lt;-<span class="st"> </span>weib_ph[<span class="kw">c</span>(<span class="st">&quot;intercept&quot;</span>, <span class="st">&quot;invest&quot;</span>, <span class="st">&quot;polar&quot;</span>, <span class="st">&quot;numst&quot;</span>, <span class="st">&quot;format&quot;</span>, <span class="st">&quot;postelec&quot;</span>,
+                     <span class="st">&quot;caretakr&quot;</span>, <span class="st">&quot;gamma&quot;</span>),]
+
+weib_ph</code></pre></div>
+<pre><code>##              Estimate          SE
+## intercept -3.86270244 0.262780694
+## invest     0.38274582 0.137174519
+## polar      0.02321558 0.005585448
+## numst     -0.60149819 0.131047758
+## format     0.13245769 0.043749027
+## postelec  -0.87931813 0.137687010
+## caretakr   1.72601174 0.275890539
+## gamma      1.29385218 0.064767331</code></pre>
+<p>Let’s format this into a presentable table and compare it with the Cox Efron approximation.</p>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">
+Cox and Weibull Estimates of Cabinet Duration
+</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b></b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Cox</b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Weibull</b>
+</th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Investiture
+</td>
+<td style="padding-right: 12px; border: none;">
+0.39 (0.14)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.38 (0.14)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Polarization
+</td>
+<td style="padding-right: 12px; border: none;">
+0.02 (0.01)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.02 (0.01)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Majority
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.58 (0.13)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.60 (0.13)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Formation
+</td>
+<td style="padding-right: 12px; border: none;">
+0.13 (0.04)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.13 (0.04)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Post-Election
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.86 (0.14)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.88 (0.14)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Caretaker
+</td>
+<td style="padding-right: 12px; border: none;">
+1.71 (0.28)
+</td>
+<td style="padding-right: 12px; border: none;">
+1.73 (0.28)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Constant
+</td>
+<td style="padding-right: 12px; border: none;">
+</td>
+<td style="padding-right: 12px; border: none;">
+-3.86 (0.26)
+</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">
+Log Likelihood
+</td>
+<td style="border-top: 1px solid black;">
+-1287.74
+</td>
+<td style="border-top: 1px solid black;">
+-1014.62
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+N
+</td>
+<td style="padding-right: 12px; border: none;">
+314
+</td>
+<td style="padding-right: 12px; border: none;">
+314
+</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">
+Shape Parameter
+</td>
+<td style="border-bottom: 2px solid black;">
+</td>
+<td style="border-bottom: 2px solid black;">
+1.29
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="4">
+<span style="font-size:0.8em"></span>
+</td>
+</tr>
+</table>
+</div>
+<div id="figure-4.1" class="section level3">
+<h3><span class="header-section-number">4.1.3</span> Figure 4.1</h3>
+<p>In preparation for the plots, we mean center the polarization and formation attempts covariates.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cabinet<span class="op">$</span>polarmean &lt;-<span class="st"> </span>cabinet<span class="op">$</span>polar <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(cabinet<span class="op">$</span>polar)
+cabinet<span class="op">$</span>formmean &lt;-<span class="st"> </span>cabinet<span class="op">$</span>format <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(cabinet<span class="op">$</span>format)</code></pre></div>
+<p>We run Cox and Weibull models with these mean centered variables. We will use these models for out plots.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cox_mod_plot &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>invest <span class="op">+</span><span class="st"> </span>polarmean <span class="op">+</span><span class="st"> </span>numst <span class="op">+</span><span class="st"> </span>formmean <span class="op">+</span><span class="st"> </span>postelec <span class="op">+</span><span class="st"> </span>caretakr,
+                 <span class="dt">data =</span> cabinet)
+
+weib_mod_plot &lt;-<span class="st"> </span><span class="kw">survreg</span>(dv <span class="op">~</span>invest <span class="op">+</span><span class="st"> </span>polarmean <span class="op">+</span><span class="st"> </span>numst <span class="op">+</span><span class="st"> </span>formmean <span class="op">+</span><span class="st"> </span>postelec
+                    <span class="op">+</span><span class="st"> </span>caretakr, <span class="dt">data =</span> cabinet)</code></pre></div>
+<p>We now calculate the baseline integrated hazard function, baseline survivor function, and baseline hazard function from the Cox model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculate baseline integrated hazard function H(t) </span>
+haz_rte &lt;-<span class="st"> </span><span class="kw">basehaz</span>(cox_mod_plot, <span class="dt">centered =</span> <span class="ot">FALSE</span>)
+
+<span class="co"># Convert H(t) to the baseline hazard, h(t). h(t) = H(t) - H(t-1) </span>
+
+haz_cox &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">diff</span>(haz_rte<span class="op">$</span>hazard))
+
+<span class="co"># Take out H(t) at t = 1 and merge with previous calculations</span>
+
+row &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="fl">0.03594616</span>)
+<span class="kw">colnames</span>(row) &lt;-<span class="st"> &quot;diff.haz_rte.hazard.&quot;</span>
+haz_cox &lt;-<span class="st"> </span><span class="kw">rbind</span>(row, haz_cox)
+<span class="kw">colnames</span>(haz_cox) &lt;-<span class="st"> &quot;baseline_hazard&quot;</span>
+
+<span class="co"># Merge baseline hazards into master dataframe with integrated hazards</span>
+haz_rte<span class="op">$</span>haz_cox &lt;-<span class="st"> </span>haz_cox
+
+<span class="co"># Calculate baseline survivor function</span>
+surv_basecox &lt;-<span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>haz_rte<span class="op">$</span>hazard)
+
+<span class="co"># Merge baseline survivor values into master dataframe with integrated hazards</span>
+haz_rte<span class="op">$</span>surv_basecox &lt;-<span class="st"> </span>surv_basecox</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># A glimpse of the values for all three functions </span>
+<span class="kw">head</span>(haz_rte)</code></pre></div>
+<pre><code>##   time     hazard baseline_hazard surv_basecox
+## 1  0.5 0.03594616      0.03594616    0.9646922
+## 2  1.0 0.06974011      0.03379395    0.9326362
+## 3  2.0 0.11021916      0.04047905    0.8956378
+## 4  3.0 0.19579836      0.08557921    0.8221780
+## 5  4.0 0.24758576      0.05178740    0.7806833
+## 6  5.0 0.35689931      0.10931355    0.6998430</code></pre>
+<p>We do the same for the Weibull model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Plot baseline survivor function for Weibull</span>
+
+<span class="co"># Let&#39;s create lambda from Weibull model</span>
+
+lambda_base &lt;-<span class="st"> </span><span class="kw">unname</span>(<span class="kw">exp</span>(<span class="op">-</span>(weib_mod_plot<span class="op">$</span>coef[<span class="dv">1</span>])))
+
+<span class="co"># Because S(t) = exp(-(lambda*t))^p, we can generate the survivor function for the</span>
+<span class="co"># baseline case. </span>
+
+p &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">/</span>weib_mod_plot<span class="op">$</span>scale
+
+t &lt;-<span class="st"> </span>cabinet<span class="op">$</span><span class="st">&#39;_t&#39;</span>
+
+surv_baseweib &lt;-<span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span>(lambda_base <span class="op">*</span><span class="st"> </span>t)<span class="op">^</span>p)
+
+weib &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">cbind</span>(t, surv_baseweib))
+
+<span class="co"># We can also generate the baseline hazard function, knowing that </span>
+<span class="co"># h(t) = lambda * p * (lambda * t)^(p-1)</span>
+
+haz_baseweib &lt;-<span class="st"> </span>lambda_base <span class="op">*</span><span class="st"> </span>p <span class="op">*</span><span class="st"> </span>(lambda_base <span class="op">*</span><span class="st"> </span>t)<span class="op">^</span>(p<span class="op">-</span><span class="dv">1</span>)
+
+weib<span class="op">$</span>haz_baseweib &lt;-<span class="st"> </span>haz_baseweib
+
+<span class="co"># The baseline integrated hazard is thus H(t) = -log(S(t))</span>
+
+inthaz_baseweib &lt;-<span class="st"> </span><span class="op">-</span><span class="kw">log</span>(surv_baseweib)
+
+weib<span class="op">$</span>inthaz_baseweib &lt;-<span class="st"> </span>inthaz_baseweib
+
+<span class="co"># A glimpse of the values for all three functions </span>
+
+<span class="kw">head</span>(weib)</code></pre></div>
+<pre><code>##     t surv_baseweib haz_baseweib inthaz_baseweib
+## 1 0.5     0.9843950   0.04069950      0.01572803
+## 2 1.0     0.9621718   0.04989390      0.03856229
+## 3 1.0     0.9621718   0.04989390      0.03856229
+## 4 2.0     0.9097843   0.06116539      0.09454773
+## 5 0.5     0.9843950   0.04069950      0.01572803
+## 6 2.0     0.9097843   0.06116539      0.09454773</code></pre>
+<p>Using the values from the haz_rte and weib dataframes, we can plot the values for the baseline survivor, integrated hazard, and baseline hazards for both models. Let’s start with the baseline survivor function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">base_surv &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> haz_rte, <span class="kw">aes</span>(<span class="dt">x =</span> time, <span class="dt">y =</span> surv_basecox, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_step</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">data =</span> weib, <span class="kw">aes</span>(<span class="dt">x =</span> t, <span class="dt">y =</span> surv_baseweib, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>)) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Baseline Survivor Function&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Cabinet Duration&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">colour =</span> <span class="st">&quot;Model&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Cox&quot;</span>, <span class="st">&quot;Weibull&quot;</span>), <span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;black&quot;</span>))</code></pre></div>
+<p>Here is the integrated hazard function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">int_haz &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> haz_rte, <span class="kw">aes</span>(<span class="dt">x =</span> time, <span class="dt">y =</span> hazard, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_step</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">data =</span> weib, <span class="kw">aes</span>(<span class="dt">x =</span> t, <span class="dt">y =</span> inthaz_baseweib, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>)) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Baseline Integrated Hazard Function&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Cabinet Duration&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">colour =</span> <span class="st">&quot;Model&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Cox&quot;</span>, <span class="st">&quot;Weibull&quot;</span>), <span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;black&quot;</span>))</code></pre></div>
+<p>Lastly, this is the baseline hazard.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Drop last seven rows for graphical purposes</span>
+
+haz_rte &lt;-<span class="st"> </span>haz_rte[<span class="op">-</span><span class="kw">c</span>(<span class="dv">48</span><span class="op">:</span><span class="dv">54</span>),]
+
+<span class="co">#Plot</span>
+
+base_haz &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> haz_rte, <span class="kw">aes</span>(<span class="dt">x =</span> time, <span class="dt">y =</span> haz_cox, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_step</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="dt">data =</span> weib, <span class="kw">aes</span>(<span class="dt">x =</span> t, <span class="dt">y =</span> haz_baseweib, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>)) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Baseline Hazard Function&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Cabinet Duration&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">colour =</span> <span class="st">&quot;Model&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Cox&quot;</span>, <span class="st">&quot;Weibull&quot;</span>), <span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;black&quot;</span>))</code></pre></div>
+<p>We can arrange all the plots together.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">grid.arrange</span>(base_surv, int_haz, base_haz, <span class="dt">ncol =</span> <span class="dv">2</span>)</code></pre></div>
+<p><img src="event_history_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
+</div>
+</div>
+<div id="cabinet-data-in-stata-1" class="section level2">
+<h2><span class="header-section-number">4.2</span> Cabinet Data in Stata</h2>
+<div id="table-4.4-1" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> Table 4.4</h3>
+<p>We estimate the Cox model in four different ways, one for each method of ties.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">eststo clear
+
+<span class="op">*</span><span class="st"> </span>Breslow <span class="kw">Method</span> (Stata default)
+eststo<span class="op">:</span><span class="st"> </span>stcox  invest polar numst format postelec caretakr, nohr breslow
+
+<span class="op">*</span><span class="st"> </span>Efron Method
+eststo<span class="op">:</span><span class="st"> </span>stcox  invest polar numst format postelec caretakr, nohr efron
+
+<span class="op">*</span><span class="st"> </span>Averaged Likelihood
+eststo<span class="op">:</span><span class="st"> </span>stcox  invest polar numst format postelec caretakr, nohr exactm
+
+<span class="op">*</span><span class="st"> </span>Exact Discrete
+eststo<span class="op">:</span><span class="st"> </span>stcox  invest polar numst format postelec caretakr, nohr exactp</code></pre></div>
+<p>Now we can format the results into one table.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Reset working directory to collect following output 
+
+cd <span class="op">~</span><span class="er">/</span>Dropbox<span class="op">/</span>event_history<span class="op">/</span>rmd
+
+<span class="op">*</span><span class="st"> </span>Generate regression table output 
+
+esttab using ch4_cox.html, replace <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">coeflabel</span>(invest <span class="st">&quot;Investiture&quot;</span> polar <span class="st">&quot;Polarization&quot;</span> numst <span class="st">&quot;Majority&quot;</span> <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span>format <span class="st">&quot;Formation&quot;</span> postelec <span class="st">&quot;Post-Election&quot;</span> caretakr <span class="st">&quot;Caretaker&quot;</span> <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span>_cons <span class="st">&quot;Constant&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(Cox Model of Cabinet Durations) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">mtitles</span>(<span class="st">&quot;Breslow&quot;</span> <span class="st">&quot;Efron&quot;</span> <span class="st">&quot;Avg. Lik.&quot;</span> <span class="st">&quot;Exact&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">eqlabels</span>(<span class="st">&quot;&quot;</span>, none) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">b</span>(<span class="dv">2</span>) <span class="kw">se</span>(<span class="dv">2</span>) nostar <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">stats</span>(ll N, <span class="kw">label</span>(<span class="st">&quot;Log-Likelihood&quot;</span> <span class="st">&quot;&lt;em&gt;N&lt;/em&gt;&quot;</span>) <span class="kw">fmt</span>(<span class="dv">2</span> <span class="dv">0</span>)) 
+    
+eststo clear</code></pre></div>
+<div class="figure">
+<img src="chapter4/ch4_cox.png" />
+
+</div>
+</div>
+<div id="table-4.5-1" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> Table 4.5</h3>
+<p>We want to compare the Cox model using the averaged likelihood approximation with the Weibull proportional hazards model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span>Averaged Likelihood<span class="op">*</span>
+eststo<span class="op">:</span><span class="st"> </span>stcox  invest polar numst format postelec caretakr, nohr exactm
+
+
+<span class="op">*</span>Weibull<span class="op">*</span>
+eststo<span class="op">:</span><span class="st"> </span>streg  invest polar numst format postelec caretakr, <span class="kw">dist</span>(weib) nohr </code></pre></div>
+<p>Again, we can format the results into a table.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Generate regression table output 
+
+esttab using ch4_cox_weib.html, replace <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">coeflabel</span>(invest <span class="st">&quot;Investiture&quot;</span> polar <span class="st">&quot;Polarization&quot;</span> numst <span class="st">&quot;Majority&quot;</span> <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span>format <span class="st">&quot;Formation&quot;</span> postelec <span class="st">&quot;Post-Election&quot;</span> caretakr <span class="st">&quot;Caretaker&quot;</span> <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span>_cons <span class="st">&quot;Constant&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(Cox and Weibull Estimates of Cabinet Durations) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">mtitles</span>(<span class="st">&quot;Cox&quot;</span> <span class="st">&quot;Weibull&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">eqlabels</span>(<span class="st">&quot;&quot;</span>, none) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">b</span>(<span class="dv">2</span>) <span class="kw">se</span>(<span class="dv">2</span>) nostar <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">stats</span>(ll N, <span class="kw">label</span>(<span class="st">&quot;Log-Likelihood&quot;</span> <span class="st">&quot;&lt;em&gt;N&lt;/em&gt;&quot;</span>) <span class="kw">fmt</span>(<span class="dv">2</span> <span class="dv">0</span>)) nogaps</code></pre></div>
+<div class="figure">
+<img src="chapter4/ch4_cox_weib.png" />
+
+</div>
+</div>
+<div id="figure-4.1-1" class="section level3">
+<h3><span class="header-section-number">4.2.3</span> Figure 4.1</h3>
+<p>In preparation for the plots, we mean center the polarization and formation attempts covariates.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>To obtain a natural <span class="dv">0</span> point on the covariates, we mean center the polarization and formation attempts covariates.  We do this using Stata<span class="st">&#39;s extension generator function:</span>
+
+<span class="st">egen meanpolar=mean(polar)</span>
+<span class="st">egen meanform=mean(format)</span>
+
+<span class="st">* Now we mean center these two variables:</span>
+
+<span class="st">gen polarmean=polar-meanpolar</span>
+<span class="st">gen formmean=format-meanform</span></code></pre></div>
+<p>Using the mean centered variables, we run the Cox and Weibull models that sill serve as the foundation for our plots. When we run the Cox model, we can immediately generate the baseline survivor, integrated hazard, and hazard functions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Estimate Cox model. The last three commands  <span class="cf">in</span> the stcox statement produce the estimates of the baseline functions, which we can graph.
+
+stcox invest polarmean numst formmean postelec caretakr, nohr exactm <span class="kw">basech</span>(inthaz) <span class="kw">basehc</span>(haz) <span class="kw">basesurv</span>(surv)
+
+predict hr, hr
+
+<span class="op">*</span><span class="st"> </span>which is <span class="kw">exp</span>(xb)
+
+<span class="op">*</span>To compute the survivor <span class="cf">function</span> <span class="cf">for</span> each observation we generate new variable<span class="op">:</span>
+
+gen surv_i=surv<span class="op">^</span>hr
+
+<span class="op">*</span><span class="st"> </span>Weibull model
+
+streg invest polarmean numst formmean postelec caretakr, <span class="kw">dist</span>(weib)  time</code></pre></div>
+<p>Now we can generate the baseline survivor, integrated hazard, and hazard functions from the Weibull model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Estimate the baseline survivor <span class="cf">function</span> from the Weibull
+
+<span class="op">*</span><span class="st"> </span>First create lambda
+
+gen lambda_base=<span class="kw">exp</span>(<span class="op">-</span>(_b[_cons]))
+
+<span class="op">*</span>Second, note that <span class="kw">S</span>(t)=exp<span class="op">^-</span>(lambda<span class="op">*</span>t)<span class="op">^</span>p.  We can generate the survivor functions <span class="cf">for</span> the baseline case<span class="op">:</span>
+
+gen surv_baseweib=<span class="kw">exp</span>(<span class="op">-</span>(lambda_base<span class="op">*</span>durat)<span class="op">^</span><span class="kw">e</span>(aux_p))
+
+<span class="op">*</span><span class="st"> </span>Now we generate the <span class="st">&quot;baseline hazard&quot;</span> from the Weibull
+
+<span class="op">*</span><span class="st"> </span>Note that <span class="kw">h</span>(t)=lambda<span class="op">*</span>p<span class="op">*</span>(lambda<span class="op">*</span>t)<span class="op">^</span>(p<span class="op">-</span><span class="dv">1</span>).  We can generate the hazard rate <span class="cf">for</span> the <span class="st">&quot;baseline case.&quot;</span>
+
+gen haz_baseweib=lambda_base<span class="op">*</span><span class="kw">e</span>(aux_p)<span class="op">*</span>(lambda_base<span class="op">*</span>durat)<span class="op">^</span>(<span class="kw">e</span>(aux_p)<span class="op">-</span><span class="dv">1</span>)
+
+<span class="op">*</span>The baseline integrated hazard is thus <span class="kw">H</span>(t)=<span class="op">-</span><span class="kw">log</span>(<span class="kw">S</span>(t))
+
+gen inthaz_baseweib=<span class="op">-</span><span class="kw">log</span>(surv_baseweib)</code></pre></div>
+<p>We can graph each of the three functions from the Cox and Weibull Models</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span>Graph the baseline functions from the Cox and Weibull Models
+
+<span class="kw">twoway</span> (line surv durat, sort <span class="kw">connect</span>(stairstep)) (line surv_baseweib durat, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Cabinet Duration&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Baseline Survivor Function&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(cabcoxst.gph, replace)
+
+<span class="op">*</span><span class="st"> </span>Graph the baseline integrated hazard from the Cox and Weibull Models
+
+<span class="kw">twoway</span> (line inthaz durat, sort <span class="kw">connect</span>(stairstep)) (line inthaz_baseweib durat, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Cabinet Duration&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Baseline Integrated Hazard Function&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(cabcoxinthaz.gph, replace)
+
+<span class="op">*</span>Graph the baseline hazard from the Cox and Weibull Models
+
+<span class="kw">twoway</span> (line haz durat, sort <span class="kw">connect</span>(stairstep)) (line haz_baseweib durat, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Cabinet Duration&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Baseline Hazard Function&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(cabcoxht.gph, replace)</code></pre></div>
+<p>Now we can combine all three graphs and export to a .png file</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">graph combine cabcoxst.gph cabcoxinthaz.gph cabcoxht.gph, <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="op">/</span><span class="er">//</span>
+<span class="kw">icolor</span>(none)) <span class="kw">saving</span>(cabcoxbase.gph, replace)
+
+graph export cabcoxbase.png, replace</code></pre></div>
+<div class="figure">
+<img src="chapter4/cabcoxbase.png" />
+
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="parametric-models-for-single-spell-duration-data.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+},
+"search": false
+});
+});
+</script>
+
+</body>
+
+</html>
