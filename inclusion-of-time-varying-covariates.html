@@ -148,12 +148,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html"><i class="fa fa-check"></i><b>7</b> Inclusion of Time-Varying Covariates</a><ul>
-<li class="chapter" data-level="7.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-stata"><i class="fa fa-check"></i><b>7.1</b> Warchest Data in Stata</a><ul>
-<li class="chapter" data-level="7.1.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#tables-7.4-and-7.5"><i class="fa fa-check"></i><b>7.1.1</b> Tables 7.4 and 7.5</a></li>
+<li class="chapter" data-level="7.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-r"><i class="fa fa-check"></i><b>7.1</b> Warchest Data in R</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.4"><i class="fa fa-check"></i><b>7.1.1</b> Table 7.4</a></li>
+<li class="chapter" data-level="7.1.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.5"><i class="fa fa-check"></i><b>7.1.2</b> Table 7.5</a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-r"><i class="fa fa-check"></i><b>7.2</b> Warchest Data in R</a><ul>
-<li class="chapter" data-level="7.2.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.4"><i class="fa fa-check"></i><b>7.2.1</b> Table 7.4</a></li>
-<li class="chapter" data-level="7.2.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.5"><i class="fa fa-check"></i><b>7.2.2</b> Table 7.5</a></li>
+<li class="chapter" data-level="7.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-stata"><i class="fa fa-check"></i><b>7.2</b> Warchest Data in Stata</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#tables-7.4-and-7.5"><i class="fa fa-check"></i><b>7.2.1</b> Tables 7.4 and 7.5</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html"><i class="fa fa-check"></i><b>8</b> Diagnostic Methods for the Event History Model</a><ul>
@@ -203,54 +203,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="inclusion-of-time-varying-covariates" class="section level1">
 <h1><span class="header-section-number">7</span> Inclusion of Time-Varying Covariates</h1>
 <p>This chapter makes use of data on challenger entry in U.S. House elections.</p>
-<div id="warchest-data-in-stata" class="section level2">
-<h2><span class="header-section-number">7.1</span> Warchest Data in Stata</h2>
-<p>Let’s load the dataset. Because we are dealing with TVCs, we want to convert the data into start and stop time format. Creating the start variable invovles lagging the ‘te’ variable and replacing the missing values with 0. The ‘te’ variable represents the stop time. Once we have the data in the right format, we can stset the data for analysis.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Dataset is warchest.dta 
-
-use <span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/warchest.dta&quot;</span>
-
-<span class="op">*</span><span class="st"> </span>Create a lagged variable and replace the missing values with <span class="dv">0</span>
-
-by caseid<span class="op">:</span><span class="st"> </span>gen start =<span class="st"> </span>te[_n<span class="op">-</span><span class="dv">1</span>]
-
-replace start =<span class="st"> </span><span class="dv">0</span> <span class="cf">if</span> <span class="kw">missing</span>(start)
-
-<span class="op">*</span><span class="st"> </span>Prepare data <span class="cf">for</span> analysis 
-
-stset te, <span class="kw">failure</span>(cut_hi) <span class="kw">time0</span>(start)</code></pre></div>
-<div id="tables-7.4-and-7.5" class="section level3">
-<h3><span class="header-section-number">7.1.1</span> Tables 7.4 and 7.5</h3>
-<p>I run the Cox and Weibull propotional hazard models.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Estimate Cox model with Breslow ties
-
-eststo clear
-
-eststo<span class="op">:</span><span class="st"> </span>stcox south dem iv ec, nohr breslow
-
-<span class="op">*</span><span class="st"> </span>Estimate Weibull proportional hazards model  
-
-eststo<span class="op">:</span><span class="st"> </span>streg south dem iv ec, <span class="kw">dist</span>(weib) nohr</code></pre></div>
-<p>We can generate the results in a table now.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Reset working directory to collect following output 
-
-cd <span class="op">~</span><span class="er">/</span>Dropbox<span class="op">/</span>github<span class="op">/</span>liwu<span class="op">-</span>gan.github.io<span class="op">/</span>chapter7
-
-<span class="op">*</span><span class="st"> </span>Generate regression table output 
-
-esttab using ch7_warchest_cox_weib.html, replace <span class="op">/</span><span class="er">//</span>
-<span class="st">    </span><span class="kw">coeflabel</span>(south <span class="st">&quot;South&quot;</span> dem <span class="st">&quot;Party&quot;</span> iv <span class="st">&quot;Prior Vote&quot;</span> <span class="op">/</span><span class="er">//</span>
-<span class="st">                </span>ec <span class="st">&quot;War Chest&quot;</span> _cons <span class="st">&quot;Constant&quot;</span>) <span class="op">/</span><span class="er">//</span>
-<span class="st">    </span><span class="kw">title</span>(Cox and Weibull Models of Challenger Deterrence) <span class="op">/</span><span class="er">//</span>
-<span class="st">    </span><span class="kw">mtitles</span>(<span class="st">&quot;Cox&quot;</span> <span class="st">&quot;Weibull&quot;</span>) <span class="op">/</span><span class="er">//</span>
-<span class="st">    </span><span class="kw">eqlabels</span>(<span class="st">&quot;&quot;</span>, none) <span class="op">/</span><span class="er">//</span>
-<span class="st">    </span><span class="kw">b</span>(<span class="dv">2</span>) <span class="kw">se</span>(<span class="dv">2</span>) nostar <span class="op">/</span><span class="er">//</span>
-<span class="st">    </span><span class="kw">stats</span>(ll N, <span class="kw">label</span>(<span class="st">&quot;Log-Likelihood&quot;</span> <span class="st">&quot;&lt;em&gt;N&lt;/em&gt;&quot;</span>) <span class="kw">fmt</span>(<span class="dv">2</span> <span class="dv">0</span>)) nogaps</code></pre></div>
-<p><img src="chapter7/ch7_warchest_cox_weib.png" /> ```</p>
-</div>
-</div>
 <div id="warchest-data-in-r" class="section level2">
-<h2><span class="header-section-number">7.2</span> Warchest Data in R</h2>
+<h2><span class="header-section-number">7.1</span> Warchest Data in R</h2>
 <p>Let’s load the warchest data. For time-varying covariates (TVCs), we want to convert the data setup to a counting process with a start and stop time. By breaking up the data into discrete intervals, we can accomodate covariates that change value within each interval. For each interval, we also observe whether the observation has failed or survived.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#-------Dataset</span>
 
@@ -293,7 +247,7 @@ warchest &lt;-<span class="st"> </span>warchest <span class="op">%&gt;%</span><s
 
 dv &lt;-<span class="st"> </span><span class="kw">Surv</span>(warchest<span class="op">$</span>start, warchest<span class="op">$</span>stop, warchest<span class="op">$</span>cut_hi)</code></pre></div>
 <div id="table-7.4" class="section level3">
-<h3><span class="header-section-number">7.2.1</span> Table 7.4</h3>
+<h3><span class="header-section-number">7.1.1</span> Table 7.4</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Run Cox model with Breslow approximation </span>
 
 warchest_cox &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>south <span class="op">+</span><span class="st"> </span>dem <span class="op">+</span><span class="st"> </span>iv <span class="op">+</span><span class="st"> </span>ec,
@@ -368,7 +322,7 @@ Log Likelihood
 </table>
 </div>
 <div id="table-7.5" class="section level3">
-<h3><span class="header-section-number">7.2.2</span> Table 7.5</h3>
+<h3><span class="header-section-number">7.1.2</span> Table 7.5</h3>
 <p>The survreg function, which is typically used to run parametric survival models, cannot accomodate start-stop data structures. As such, I use the package ‘eha’ instead, using the phreg command to get run a proportional hazards Weibull model (Weibull is the default distribution, so I do not need to specify it).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">warchest_weib &lt;-<span class="st"> </span><span class="kw">phreg</span>(dv <span class="op">~</span><span class="st"> </span>south <span class="op">+</span><span class="st"> </span>dem <span class="op">+</span><span class="st"> </span>iv <span class="op">+</span><span class="st"> </span>ec, <span class="dt">data =</span> warchest)
 
@@ -459,6 +413,52 @@ N
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div id="warchest-data-in-stata" class="section level2">
+<h2><span class="header-section-number">7.2</span> Warchest Data in Stata</h2>
+<p>Let’s load the dataset. Because we are dealing with TVCs, we want to convert the data into start and stop time format. Creating the start variable invovles lagging the ‘te’ variable and replacing the missing values with 0. The ‘te’ variable represents the stop time. Once we have the data in the right format, we can stset the data for analysis.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Dataset is warchest.dta 
+
+use <span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/warchest.dta&quot;</span>
+
+<span class="op">*</span><span class="st"> </span>Create a lagged variable and replace the missing values with <span class="dv">0</span>
+
+by caseid<span class="op">:</span><span class="st"> </span>gen start =<span class="st"> </span>te[_n<span class="op">-</span><span class="dv">1</span>]
+
+replace start =<span class="st"> </span><span class="dv">0</span> <span class="cf">if</span> <span class="kw">missing</span>(start)
+
+<span class="op">*</span><span class="st"> </span>Prepare data <span class="cf">for</span> analysis 
+
+stset te, <span class="kw">failure</span>(cut_hi) <span class="kw">time0</span>(start)</code></pre></div>
+<div id="tables-7.4-and-7.5" class="section level3">
+<h3><span class="header-section-number">7.2.1</span> Tables 7.4 and 7.5</h3>
+<p>I run the Cox and Weibull propotional hazard models.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Estimate Cox model with Breslow ties
+
+eststo clear
+
+eststo<span class="op">:</span><span class="st"> </span>stcox south dem iv ec, nohr breslow
+
+<span class="op">*</span><span class="st"> </span>Estimate Weibull proportional hazards model  
+
+eststo<span class="op">:</span><span class="st"> </span>streg south dem iv ec, <span class="kw">dist</span>(weib) nohr</code></pre></div>
+<p>We can generate the results in a table now.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Reset working directory to collect following output 
+
+cd <span class="op">~</span><span class="er">/</span>Dropbox<span class="op">/</span>github<span class="op">/</span>liwu<span class="op">-</span>gan.github.io<span class="op">/</span>chapter7
+
+<span class="op">*</span><span class="st"> </span>Generate regression table output 
+
+esttab using ch7_warchest_cox_weib.html, replace <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">coeflabel</span>(south <span class="st">&quot;South&quot;</span> dem <span class="st">&quot;Party&quot;</span> iv <span class="st">&quot;Prior Vote&quot;</span> <span class="op">/</span><span class="er">//</span>
+<span class="st">                </span>ec <span class="st">&quot;War Chest&quot;</span> _cons <span class="st">&quot;Constant&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(Cox and Weibull Models of Challenger Deterrence) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">mtitles</span>(<span class="st">&quot;Cox&quot;</span> <span class="st">&quot;Weibull&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">eqlabels</span>(<span class="st">&quot;&quot;</span>, none) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">b</span>(<span class="dv">2</span>) <span class="kw">se</span>(<span class="dv">2</span>) nostar <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">stats</span>(ll N, <span class="kw">label</span>(<span class="st">&quot;Log-Likelihood&quot;</span> <span class="st">&quot;&lt;em&gt;N&lt;/em&gt;&quot;</span>) <span class="kw">fmt</span>(<span class="dv">2</span> <span class="dv">0</span>)) nogaps</code></pre></div>
+<p><img src="chapter7/ch7_warchest_cox_weib.png" /> ```</p>
 </div>
 </div>
 </div>
