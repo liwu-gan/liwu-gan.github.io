@@ -99,15 +99,15 @@ This chapter makes use of data on the duration until state adoption of restricti
 
 This chapter makes use of data on challenger entry in U.S. House elections.
 
-## Warchest Data in Stata 
-
-```{r, child = 'chapter7/ch7_warchest_stata.rmd'}
-
-```
-
 ## Warchest Data in R
 
 ```{r, child = 'chapter7/ch7_warchest.rmd'}
+
+```
+
+## Warchest Data in Stata 
+
+```{r, child = 'chapter7/ch7_warchest_stata.rmd'}
 
 ```
 
