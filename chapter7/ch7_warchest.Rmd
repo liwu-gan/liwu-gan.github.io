@@ -1,0 +1,216 @@
+---
+title: 'Warchest Data in R'
+output: html_document
+---
+
+```{r, include = FALSE}
+
+#---- Packages 
+library(foreign)
+library(survival)
+library(survminer)
+library(flexsurv)
+library(texreg)
+library(ggplot2)
+library(SurvRegCensCov)
+library(haven)
+library(eha)
+library(tidyverse)
+
+```
+
+Let's load the warchest data. For time-varying covariates (TVCs), we want to convert the data setup to a counting process with a start and stop time. By breaking up the data into discrete intervals, we can accomodate covariates that change value within each interval. For each interval, we also observe whether the observation has failed or survived. 
+
+
+```{r}
+
+#-------Dataset
+
+warchest <- read_dta("~/Dropbox/github/liwu-gan.github.io/dta/warchest.dta")
+
+# Take a look at dataset 
+
+head(warchest)
+```
+
+
+As we can see, the data right now only has information on how many weeks passes by for each observation (the 'te' variable). For example, caseid has two observations that are recorded at week 26 and week 50. We want to record this in counting process notation, which would signify a [0, 26] interval for the first observation and a [26,50] interval for the second.I lag the 'te' variable (which is the stop time) and replace the NAs with 0s, which records the start time. 
+
+```{r}
+
+#-------Data prepation
+
+warchest <- warchest %>% 
+  group_by(caseid) %>% 
+  mutate(start = lag(te)) %>% 
+  mutate(start = replace_na(start, 0)) %>% 
+  rename(stop = te) %>% 
+  select(iv:dem, start, stop, cut_hi)
+
+head(warchest)
+
+# Specifying the survival object with the start and stop times and the event.
+
+dv <- Surv(warchest$start, warchest$stop, warchest$cut_hi)
+
+```
+
+### Table 7.4 
+
+```{r}
+
+# Run Cox model with Breslow approximation 
+
+warchest_cox <- coxph(dv ~ south + dem + iv + ec,
+                      data = warchest, ties = "breslow")
+
+
+```
+
+```{r, include = FALSE}
+
+# Write function to customize model output for all three models 
+
+tex_reg_converter <- function(original_model){
+  
+  
+  coefficient.names <- c("South", "Party", "Prior Vote", "War Chest")
+  coefficients <- original_model$coef 
+  se <- sqrt(diag(vcov(original_model)))
+  n <- original_model$n
+  lik <- logLik(original_model)
+  gof <- c(n, lik)
+  gof.names <- c("N", "Log Likelihood")
+  decimal.places <- c(FALSE, TRUE)
+  
+  createTexreg(
+    coef.names = coefficient.names, coef = coefficients, se = se,
+    gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+  
+}
+
+mod <- tex_reg_converter(warchest_cox)
+
+
+
+
+
+```
+
+Here is the output, with the standard errors in parentheses:
+
+```{r, include = FALSE}
+# Put tables all together
+
+htmlreg(mod, stars = c(), caption = "Cox Model of Challenger Deterrence",
+        caption.above = TRUE, custom.model.names = c(" "), center = FALSE,             single.row = TRUE)
+
+```
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">Cox Model of Challenger Deterrence</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b></b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b> </b></th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">South</td>
+<td style="padding-right: 12px; border: none;">-0.44 (0.42)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Party</td>
+<td style="padding-right: 12px; border: none;">0.23 (0.32)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Prior Vote</td>
+<td style="padding-right: 12px; border: none;">-6.97 (1.66)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">War Chest</td>
+<td style="padding-right: 12px; border: none;">-3.01 (1.39)</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">N</td>
+<td style="border-top: 1px solid black;">1376</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">Log Likelihood</td>
+<td style="border-bottom: 2px solid black;">-197.39</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="3"><span style="font-size:0.8em"></span></td>
+</tr>
+</table>
+
+### Table 7.5
+
+The survreg function, which is typically used to run parametric survival models, cannot accomodate start-stop data structures. As such, I use the package 'eha' instead, using the phreg command to get run a proportional hazards Weibull model (Weibull is the default distribution, so I do not need to specify it). 
+
+```{r}
+
+warchest_weib <- phreg(dv ~ south + dem + iv + ec, data = warchest)
+
+warchest_weib
+
+```
+
+
+I format the results into a regression table:
+
+```{r, include = FALSE}
+
+# Create texreg object for Weibull model.
+
+  coefficient.names <- c("South", "Party", "Prior Vote", "War Chest")
+  coefficients <- c(-.53, .23, -6.44, -2.58)
+  se <- c(.42, .32, 1.66, 1.38)
+  shape <- 2.43
+  n <- 1376
+  gof <- c(shape, n)
+  gof.names <- c("Shape Parameter", "N" )
+  decimal.places <- c(TRUE, FALSE)
+  
+  warchest_weib <- createTexreg(
+    coef.names = coefficient.names, coef = coefficients, se = se,
+    gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+
+
+htmlreg(warchest_weib, stars = c(), caption = "Weibull Model of Challenger Deterrence", caption.above = TRUE, custom.model.names = c(" "), center = FALSE, single.row = TRUE)
+  
+```
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">Weibull Model of Challenger Deterrence</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b></b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b> </b></th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">South</td>
+<td style="padding-right: 12px; border: none;">-0.53 (0.42)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Party</td>
+<td style="padding-right: 12px; border: none;">0.23 (0.32)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Prior Vote</td>
+<td style="padding-right: 12px; border: none;">-6.44 (1.66)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">War Chest</td>
+<td style="padding-right: 12px; border: none;">-2.58 (1.38)</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">Shape Parameter</td>
+<td style="border-top: 1px solid black;">2.43</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">N</td>
+<td style="border-bottom: 2px solid black;">1376</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="3"><span style="font-size:0.8em"></span></td>
+</tr>
+</table>

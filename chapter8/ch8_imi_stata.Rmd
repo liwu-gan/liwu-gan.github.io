@@ -1,0 +1,199 @@
+---
+title: 'Chapter 8: International Militarized Intervention in Stata'
+output: html_document
+---
+
+```{r, include = FALSE}
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+```
+
+```{r, eval = FALSE, echo = FALSE}
+
+clear
+set more off
+
+/* Dataset is omifinal.dta */
+
+use "~/Dropbox/github/liwu-gan.github.io/dta/omifinal.dta"
+
+
+```
+
+### Figure 8.3
+
+After running a Cox model, we want to assess whether any observations are exerting influence on the coefficient estimates. To do this, we create a matrix of score residuals and multiply it by the variance-covariance matrix generated from the Cox model. What we get is standard deviation changes to the estimates (called the dfbeta). 
+
+```{r, eval = FALSE}
+
+* Estimate a Cox model
+
+stcox pbal idem tdem ctg ali break, nohr exactp esr(esr*)
+
+* The esr(esr*) command tells Stata to compute three variables storing the values of the efficient score residuals (esr1 and esr2 and esr3)
+
+* Next use Stata's matrix commands to generate an n x m matrix of score residuals
+
+set matsize 800
+
+mkmat esr1 esr2 esr3 esr4 esr5 esr6, matrix(score_residuals), if(e(sample))
+
+* Now compute the var-cov matrix of beta
+
+mat var_cov=e(V)
+
+* and multiply the score residual matrix by the var-cov matrix to obtain the n x m matrix of scaled changes in the m coefficients
+
+mat dfbeta=score_residuals*var_cov
+
+* Now, we can name the columns, which will correspond to the influence values for the ith observation on the mth covariate
+
+svmat dfbeta, names(x)
+
+* For graphing purposes, we create a variable storing the observation number
+
+gen obs=_n
+
+* Also for display purposes, create a constant equal to 0
+
+gen zero=0
+
+```
+
+For each covariate, we plot the dfbetas by the observation number to check for influential observations. Deviations from 0 suggest influential observations. From the plots, none appear large in magnitude. 
+
+```{r, eval = FALSE}
+
+* Reset working directory to collect following output 
+
+cd ~/Dropbox/github/liwu-gan.github.io/chapter8
+
+* Now we can graph them; for the power balance covariate, the graph command is
+
+twoway (line x1 obs, sort) (line zero obs, sort), ///
+    legend(off) ///
+    xtitle("Observation Number") ///
+    title("Power Balance") ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_influencepb.gph, replace)
+	
+	
+* And for the intervenor democracy score
+
+twoway (line x2 obs, sort) (line zero obs, sort), ///
+    legend(off) ///
+    xtitle("Observation Number") ///
+    title("Intervenor Democracy") ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_influenceid.gph, replace)
+	
+	
+* And for the target democracy score
+
+
+twoway (line x3 obs, sort) (line zero obs, sort), ///
+    legend(off) ///
+    xtitle("Observation Number") ///
+    title("Target Democracy") ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_influencetd.gph, replace)
+	
+* And for the contiguity status covariate
+
+twoway (line x4 obs, sort) (line zero obs, sort), ///
+    legend(off) ///
+    xtitle("Observation Number") ///
+    title("Territorial Contiguity") ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_influencec.gph, replace)
+	
+* And for the alliance status covariate
+
+twoway (line x5 obs, sort) (line zero obs, sort), ///
+    legend(off) ///
+    xtitle("Observation Number") ///
+    title("Alliance") ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_influencea.gph, replace)
+	
+* And for the government breakdown covariate
+
+twoway (line x6 obs, sort) (line zero obs, sort), ///
+    legend(off) ///
+    xtitle("Observation Number") ///
+    title("Authority Breakdown") ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_influenceb.gph, replace)
+
+
+* Now we can combine all six graphs 
+
+graph combine ch8_influencepb.gph ch8_influenceid.gph ch8_influencetd.gph ///
+ ch8_influencec.gph ch8_influencea.gph ch8_influenceb.gph, graphregion(color(white) ///
+icolor(none)) saving(ch8_influence.gph, replace)
+
+* Export graph to .png file
+
+graph export ch8_influence.png, replace
+
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter8/ch8_influence.png){
+}
+
+### Figure 8.4
+
+We want to check the presence of outliers. The deviance residuals were calculated from a Cox model, and we plot the deviance residuals against the observation number. We also plotted the smoothed residuals using lowess for graphical purposes. What we want to see are the residuals distributed uniformly around 0. As the plot shows, there are some observations with very large negative residuals. 
+
+```{r, eval = FALSE}
+
+* Estimate Cox model and output martingale residuals
+
+stcox  ctg idem tdem pbal break ali, nohr exactp mgale(mg)
+
+* Now, create deviance residuals using predict option
+
+predict double deviance, deviance
+
+* Ise ksm to graph deviance (using lowess)
+
+twoway (scatter deviance obs, sort) (lowess deviance obs, sort) (line zero obs, sort), ///
+    legend(off) ///
+    xtitle("Observation Number") ///
+    title("Deviance Residuals") ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_outliersomi.gph, replace)
+	
+* Export graph to .png file
+
+graph export ch8_outliersomi.png, replace
+
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter8/ch8_outliersomi.png){
+}
+
+### Figure 8.5
+
+Here, the deviance residuals are plotted against duration times. We also include the smoothed residuals using lowess again. We can see that interventions which last for a long time tend to have large negative residuals. This suggests that for longer interventions, the probability of an intervention terminating is overestimated by the Cox model.
+
+```{r, eval = FALSE}
+
+twoway (scatter deviance durmths, sort) (lowess deviance durmths, sort) (line zero durmths, sort), ///
+    legend(off) ///
+    xtitle("Duration of Militarized Intervention") ///
+    title("Deviance Residuals") ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_outliersomi2.gph, replace)
+
+	
+*Export graph to .png file
+
+graph export ch8_outliersomi2.png, replace
+
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter8/ch8_outliersomi2.png){
+}
+
+

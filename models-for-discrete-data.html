@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Event History Modeling: A Guide for Social Scientists</title>
+  <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook.">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Event History Modeling: A Guide for Social Scientists" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Event History Modeling: A Guide for Social Scientists" />
+  
+  <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+<meta name="author" content="Janet M. Box-Steffensmeier, Bradford S. Jones, David Darmofal">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="the-cox-proportional-hazards-model.html">
+<link rel="next" href="issues-in-model-selection.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="event-history-and-social-science.html"><a href="event-history-and-social-science.html"><i class="fa fa-check"></i><b>1</b> Event History and Social Science</a></li>
+<li class="chapter" data-level="2" data-path="the-logic-of-event-history-analysis.html"><a href="the-logic-of-event-history-analysis.html"><i class="fa fa-check"></i><b>2</b> The Logic of Event History Analysis</a></li>
+<li class="chapter" data-level="3" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html"><i class="fa fa-check"></i><b>3</b> Parametric Models for Single-Spell Duration Data</a><ul>
+<li class="chapter" data-level="3.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#un-data-in-r"><i class="fa fa-check"></i><b>3.1</b> UN Data in R</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.1"><i class="fa fa-check"></i><b>3.1.1</b> Table 3.1</a></li>
+<li class="chapter" data-level="3.1.2" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#figure-3.1"><i class="fa fa-check"></i><b>3.1.2</b> Figure 3.1</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#un-data-in-stata"><i class="fa fa-check"></i><b>3.2</b> UN Data in Stata</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.1-1"><i class="fa fa-check"></i><b>3.2.1</b> Table 3.1</a></li>
+<li class="chapter" data-level="3.2.2" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#figure-3.1-1"><i class="fa fa-check"></i><b>3.2.2</b> Figure 3.1</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#cabinet-data-in-r"><i class="fa fa-check"></i><b>3.3</b> Cabinet Data in R</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.3"><i class="fa fa-check"></i><b>3.3.1</b> Table 3.3</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#cabinet-data-in-stata"><i class="fa fa-check"></i><b>3.4</b> Cabinet Data in Stata</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.3-1"><i class="fa fa-check"></i><b>3.4.1</b> Table 3.3</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html"><i class="fa fa-check"></i><b>4</b> The Cox Proportional Hazards Model</a><ul>
+<li class="chapter" data-level="4.1" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#cabinet-data-in-r-1"><i class="fa fa-check"></i><b>4.1</b> Cabinet Data in R</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.4"><i class="fa fa-check"></i><b>4.1.1</b> Table 4.4</a></li>
+<li class="chapter" data-level="4.1.2" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.5"><i class="fa fa-check"></i><b>4.1.2</b> Table 4.5</a></li>
+<li class="chapter" data-level="4.1.3" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#figure-4.1"><i class="fa fa-check"></i><b>4.1.3</b> Figure 4.1</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#cabinet-data-in-stata-1"><i class="fa fa-check"></i><b>4.2</b> Cabinet Data in Stata</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.4-1"><i class="fa fa-check"></i><b>4.2.1</b> Table 4.4</a></li>
+<li class="chapter" data-level="4.2.2" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.5-1"><i class="fa fa-check"></i><b>4.2.2</b> Table 4.5</a></li>
+<li class="chapter" data-level="4.2.3" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#figure-4.1-1"><i class="fa fa-check"></i><b>4.2.3</b> Figure 4.1</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="models-for-discrete-data.html"><a href="models-for-discrete-data.html"><i class="fa fa-check"></i><b>5</b> Models for Discrete Data</a><ul>
+<li class="chapter" data-level="5.1" data-path="models-for-discrete-data.html"><a href="models-for-discrete-data.html#militarized-interventions-data-in-r"><i class="fa fa-check"></i><b>5.1</b> Militarized Interventions Data in R</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="models-for-discrete-data.html"><a href="models-for-discrete-data.html#table-5.3"><i class="fa fa-check"></i><b>5.1.1</b> Table 5.3</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="models-for-discrete-data.html"><a href="models-for-discrete-data.html#militarized-interventions-data-in-stata"><i class="fa fa-check"></i><b>5.2</b> Militarized Interventions Data in Stata</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="models-for-discrete-data.html"><a href="models-for-discrete-data.html#table-5.3-1"><i class="fa fa-check"></i><b>5.2.1</b> Table 5.3</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html"><i class="fa fa-check"></i><b>6</b> Issues in Model Selection</a><ul>
+<li class="chapter" data-level="6.1" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#restrictive-abortion-legislation-data-in-r"><i class="fa fa-check"></i><b>6.1</b> Restrictive Abortion Legislation Data in R</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#table-6.1"><i class="fa fa-check"></i><b>6.1.1</b> Table 6.1</a></li>
+<li class="chapter" data-level="6.1.2" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#figure-6.1"><i class="fa fa-check"></i><b>6.1.2</b> Figure 6.1</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#restrictive-abortion-legislation-data-in-stata"><i class="fa fa-check"></i><b>6.2</b> Restrictive Abortion Legislation Data in Stata</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#table-6.1-1"><i class="fa fa-check"></i><b>6.2.1</b> Table 6.1</a></li>
+<li class="chapter" data-level="6.2.2" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#figure-6.1-1"><i class="fa fa-check"></i><b>6.2.2</b> Figure 6.1</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html"><i class="fa fa-check"></i><b>7</b> Inclusion of Time-Varying Covariates</a><ul>
+<li class="chapter" data-level="7.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-stata"><i class="fa fa-check"></i><b>7.1</b> Warchest Data in Stata</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#tables-7.4-and-7.5"><i class="fa fa-check"></i><b>7.1.1</b> Tables 7.4 and 7.5</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-r"><i class="fa fa-check"></i><b>7.2</b> Warchest Data in R</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.4"><i class="fa fa-check"></i><b>7.2.1</b> Table 7.4</a></li>
+<li class="chapter" data-level="7.2.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.5"><i class="fa fa-check"></i><b>7.2.2</b> Table 7.5</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html"><i class="fa fa-check"></i><b>8</b> Diagnostic Methods for the Event History Model</a><ul>
+<li class="chapter" data-level="8.1" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#cabinet-data-in-r-2"><i class="fa fa-check"></i><b>8.1</b> Cabinet Data in R</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.1"><i class="fa fa-check"></i><b>8.1.1</b> Figure 8.1</a></li>
+<li class="chapter" data-level="8.1.2" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.2"><i class="fa fa-check"></i><b>8.1.2</b> Figure 8.2</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#cabinet-data-in-stata-2"><i class="fa fa-check"></i><b>8.2</b> Cabinet Data in Stata</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.1-1"><i class="fa fa-check"></i><b>8.2.1</b> Figure 8.1</a></li>
+<li class="chapter" data-level="8.2.2" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.2-1"><i class="fa fa-check"></i><b>8.2.2</b> Figure 8.2</a></li>
+<li class="chapter" data-level="8.2.3" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.6"><i class="fa fa-check"></i><b>8.2.3</b> Figure 8.6</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#militarized-interventions-data-in-r-1"><i class="fa fa-check"></i><b>8.3</b> Militarized Interventions Data in R</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.3"><i class="fa fa-check"></i><b>8.3.1</b> Figure 8.3</a></li>
+<li class="chapter" data-level="8.3.2" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.4"><i class="fa fa-check"></i><b>8.3.2</b> Figure 8.4</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#militarized-interventions-data-in-stata-1"><i class="fa fa-check"></i><b>8.4</b> Militarized Interventions Data in Stata</a><ul>
+<li class="chapter" data-level="8.4.1" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.3-1"><i class="fa fa-check"></i><b>8.4.1</b> Figure 8.3</a></li>
+<li class="chapter" data-level="8.4.2" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.4-1"><i class="fa fa-check"></i><b>8.4.2</b> Figure 8.4</a></li>
+<li class="chapter" data-level="8.4.3" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.5"><i class="fa fa-check"></i><b>8.4.3</b> Figure 8.5</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="some-modeling-strategies-for-unobserved-heterogeneity.html"><a href="some-modeling-strategies-for-unobserved-heterogeneity.html"><i class="fa fa-check"></i><b>9</b> Some Modeling Strategies for Unobserved Heterogeneity</a><ul>
+<li class="chapter" data-level="9.1" data-path="some-modeling-strategies-for-unobserved-heterogeneity.html"><a href="some-modeling-strategies-for-unobserved-heterogeneity.html#conflict-data-in-r"><i class="fa fa-check"></i><b>9.1</b> Conflict Data in R</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="some-modeling-strategies-for-unobserved-heterogeneity.html"><a href="some-modeling-strategies-for-unobserved-heterogeneity.html#table-9.1"><i class="fa fa-check"></i><b>9.1.1</b> Table 9.1</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="models-for-multiple-events.html"><a href="models-for-multiple-events.html"><i class="fa fa-check"></i><b>10</b> Models for Multiple Events</a></li>
+<li class="chapter" data-level="11" data-path="the-social-sciences-and-event-history.html"><a href="the-social-sciences-and-event-history.html"><i class="fa fa-check"></i><b>11</b> The Social Sciences and Event History</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Event History Modeling: A Guide for Social Scientists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="models-for-discrete-data" class="section level1">
+<h1><span class="header-section-number">5</span> Models for Discrete Data</h1>
+<p>This chapter makes use of the International Military Interventions (IMI) dataset that has information on the duration of militarized interventions from 1946-1988 and a variety of covariates (from Pearson and Baumann 1993).</p>
+<div id="militarized-interventions-data-in-r" class="section level2">
+<h2><span class="header-section-number">5.1</span> Militarized Interventions Data in R</h2>
+<p>Note that for two of the models, the replication of Table 5.3 will be based on the smaller dataset (which I name “imi”) than the one shown in Stata and in the book. This is because the exact discrete Cox model using the larger dataset (“imi2”) is too computionally intense for R to estimate within a reasonable time. In addition, the Weibull model cannot handle start-stop Surv objects. Nevertheless, the results using the smaller dataset are essentially the same so I still reproduce them below.</p>
+<p>First, we prepare both the large and small datasets for analysis by renaming certain variables to avoid conflicting with R’s base functions, creating the Surv object, and creating mean centered variables for analysis of the larger dataset.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#-------Dataset</span>
+
+<span class="co"># This is the dataset used in the Stata version, but because it takes so long to run, one can get the same results with the smaller dataset. This is important when running the exact discrete Cox model, because that model is computationally intense. </span>
+
+imi2 &lt;-<span class="st"> </span><span class="kw">read.dta</span>(<span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/omifinal2.dta&quot;</span>)
+
+
+imi &lt;-<span class="st"> </span><span class="kw">read.dta</span>(<span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/omismall.dta&quot;</span>)
+
+
+<span class="co">#-------Data prepation</span>
+
+<span class="co"># Rename dependent variable for both datasets to avoid confusion with base R functions</span>
+
+<span class="kw">names</span>(imi2)[<span class="kw">names</span>(imi2) <span class="op">==</span><span class="st"> &#39;break&#39;</span>] &lt;-<span class="st"> &#39;breakdown&#39;</span>
+
+<span class="co"># Create survival object for dv in the larger dataset</span>
+
+dv2 &lt;-<span class="st"> </span><span class="kw">Surv</span>(imi2<span class="op">$</span><span class="st">&#39;_t0&#39;</span>, imi2<span class="op">$</span><span class="st">&#39;_t&#39;</span>, imi2<span class="op">$</span>event)
+
+<span class="co"># Create survival object for dv in the smller dataset</span>
+
+dv &lt;-<span class="st"> </span><span class="kw">Surv</span>(imi<span class="op">$</span><span class="st">&#39;_t&#39;</span>, imi<span class="op">$</span><span class="st">&#39;_d&#39;</span>)
+
+<span class="co"># We want to only run the models on the data that has no missing observations for the following logit equation. </span>
+
+<span class="co">#m1 &lt;- glm(fail ~ ctg + ali + idem + tdem + pbal + breakdown, data = imi2)</span>
+
+imi2 &lt;-<span class="st"> </span>imi2 <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">drop_na</span>(fail, ctg, ali, idem, tdem, pbal, breakdown)
+
+
+<span class="co"># Lastly, we mean center the pbal, idem, and tdem variables.</span>
+
+imi2<span class="op">$</span>idemmean &lt;-<span class="st"> </span>imi2<span class="op">$</span>idem <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(imi2<span class="op">$</span>idem)
+
+imi2<span class="op">$</span>tdemmean &lt;-<span class="st"> </span>imi2<span class="op">$</span>tdem <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(imi2<span class="op">$</span>tdem)
+
+imi2<span class="op">$</span>pbalmean &lt;-<span class="st"> </span>imi2<span class="op">$</span>pbal <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(imi2<span class="op">$</span>pbal)</code></pre></div>
+<div id="table-5.3" class="section level3">
+<h3><span class="header-section-number">5.1.1</span> Table 5.3</h3>
+<p>We first run the Cox exact discrete model (which is essentially the same as the conditoinal logit except it does not drop observations) and the Weibull model using the smaller dataset.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Cox exact discrete</span>
+
+ed_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>pbal <span class="op">+</span><span class="st"> </span>ctg <span class="op">+</span><span class="st"> </span>ali <span class="op">+</span><span class="st"> </span>idem <span class="op">+</span><span class="st"> </span>tdem <span class="op">+</span><span class="st"> </span>breakdown, <span class="dt">data =</span> imi, <span class="dt">ties =</span> <span class="st">&quot;exact&quot;</span>)
+
+<span class="co"># Weibull A.F.T. </span>
+
+weib_mod &lt;-<span class="st"> </span><span class="kw">survreg</span>(dv <span class="op">~</span><span class="st"> </span>pbal <span class="op">+</span><span class="st"> </span>ctg <span class="op">+</span><span class="st"> </span>ali <span class="op">+</span><span class="st"> </span>idem <span class="op">+</span><span class="st"> </span>tdem <span class="op">+</span><span class="st"> </span>breakdown, <span class="dt">data =</span> imi, <span class="dt">dist =</span> <span class="st">&quot;weibull&quot;</span>)</code></pre></div>
+<p>Again, we have to convert the Weibull A.F.T. to a P.H. parameterization.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Conversion from Weibull A.F.T.  to P.H. </span>
+
+intercept &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">656</span>)
+
+imi<span class="op">$</span>intercept &lt;-<span class="st"> </span>intercept
+
+weib_mod1 &lt;-<span class="st"> </span><span class="kw">survreg</span>(dv <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>intercept <span class="op">+</span><span class="st">  </span>pbal <span class="op">+</span><span class="st"> </span>ctg <span class="op">+</span><span class="st"> </span>ali <span class="op">+</span><span class="st"> </span>idem <span class="op">+</span><span class="st"> </span>tdem <span class="op">+</span><span class="st"> </span>breakdown, <span class="dt">data =</span> imi, <span class="dt">dist =</span> <span class="st">&quot;weibull&quot;</span>)
+
+weib_mod2 &lt;-<span class="st"> </span><span class="kw">survreg</span>(dv <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>pbal <span class="op">+</span><span class="st"> </span>intercept <span class="op">+</span><span class="st">  </span>ctg <span class="op">+</span><span class="st"> </span>ali <span class="op">+</span><span class="st"> </span>idem <span class="op">+</span><span class="st"> </span>tdem <span class="op">+</span><span class="st"> </span>breakdown, <span class="dt">data =</span> imi, <span class="dt">dist =</span> <span class="st">&quot;weibull&quot;</span>)
+
+weib_mod1_ph &lt;-<span class="st"> </span><span class="kw">ConvertWeibull</span>(weib_mod1)
+
+weib_mod2_ph &lt;-<span class="st"> </span><span class="kw">ConvertWeibull</span>(weib_mod2)
+
+weib_ph &lt;-<span class="st"> </span><span class="kw">rbind</span>(weib_mod1_ph<span class="op">$</span>vars, weib_mod2_ph<span class="op">$</span>vars)
+
+<span class="co"># Delete rows that are redundant/unnecessary </span>
+weib_ph &lt;-<span class="st"> </span>weib_ph[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">9</span>,<span class="dv">12</span>,<span class="dv">13</span>,<span class="dv">14</span>,<span class="dv">15</span>,<span class="dv">16</span>),]
+
+weib_ph &lt;-<span class="st"> </span>weib_ph[<span class="kw">c</span>(<span class="st">&quot;intercept&quot;</span>, <span class="st">&quot;pbal&quot;</span>, <span class="st">&quot;ctg&quot;</span>, <span class="st">&quot;ali&quot;</span>, <span class="st">&quot;idem&quot;</span>, <span class="st">&quot;tdem&quot;</span>,
+                     <span class="st">&quot;breakdown&quot;</span>, <span class="st">&quot;gamma&quot;</span>),]
+
+weib_ph</code></pre></div>
+<pre><code>##              Estimate          SE
+## intercept -1.32153217 0.151345243
+## pbal      -0.50188655 0.152589537
+## ctg       -0.28344841 0.101406267
+## ali        0.25609560 0.095594264
+## idem       0.01247340 0.006120223
+## tdem       0.02285714 0.006710263
+## breakdown -0.44311104 0.197807373
+## gamma      0.65543389 0.022078980</code></pre>
+<p>Let’s format these models into a presentable table. I show how to do this for the exact discrete model and repeat the same steps for the Weibull (not shown).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create texreg object for exact discrete/conditional logit model. </span>
+
+tex_reg_converter &lt;-<span class="st"> </span><span class="cf">function</span>(original_model){
+  
+  
+  coefficient.names &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Relative Capabilities&quot;</span>, <span class="st">&quot;Territorial Contiguity&quot;</span>, <span class="st">&quot;Intervenor Allied to Target&quot;</span>, <span class="st">&quot;Intervenor Democracy&quot;</span>, <span class="st">&quot;Target Democracy&quot;</span>,
+                       <span class="st">&quot;Breakdown of Authority&quot;</span>)
+  coefficients &lt;-<span class="st"> </span>original_model<span class="op">$</span>coef 
+  se &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcov</span>(original_model)))
+  n &lt;-<span class="st"> </span>original_model<span class="op">$</span>n
+  lik &lt;-<span class="st"> </span><span class="kw">logLik</span>(original_model)
+  gof &lt;-<span class="st"> </span><span class="kw">c</span>(lik, n)
+  gof.names &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Log Likelihood&quot;</span>, <span class="st">&quot;N&quot;</span> )
+  decimal.places &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="ot">FALSE</span>)
+  
+  <span class="kw">createTexreg</span>(
+    <span class="dt">coef.names =</span> coefficient.names, <span class="dt">coef =</span> coefficients, <span class="dt">se =</span> se,
+    <span class="dt">gof.names =</span> gof.names, <span class="dt">gof =</span> gof, <span class="dt">gof.decimal =</span> decimal.places)
+  
+}
+
+ed_mod &lt;-<span class="st"> </span><span class="kw">tex_reg_converter</span>(ed_mod)</code></pre></div>
+<p>Now we can run the logit model with the lowess term using the large dataset.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">log_mod &lt;-<span class="st"> </span><span class="kw">glm</span>(event <span class="op">~</span><span class="st"> </span>pbalmean <span class="op">+</span><span class="st"> </span>ctg <span class="op">+</span><span class="st"> </span>ali <span class="op">+</span><span class="st"> </span>idemmean <span class="op">+</span><span class="st"> </span>tdemmean <span class="op">+</span><span class="st"> </span>breakdown <span class="op">+</span><span class="st"> </span>lowesst2, <span class="dt">data =</span> imi2, <span class="dt">family =</span> <span class="st">&quot;binomial&quot;</span>)</code></pre></div>
+<p>We format the results of the logit and put them together with the Cox and Weibull results.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tex_reg_converter &lt;-<span class="st"> </span><span class="cf">function</span>(original_model){
+
+coefficient.names &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Constant&quot;</span>,<span class="st">&quot;Relative Capabilities&quot;</span>, <span class="st">&quot;Territorial Contiguity&quot;</span>, <span class="st">&quot;Intervenor Allied to Target&quot;</span>, <span class="st">&quot;Intervenor Democracy&quot;</span>, <span class="st">&quot;Target Democracy&quot;</span>, <span class="st">&quot;Breakdown of Authority&quot;</span>, <span class="st">&quot;Duration Dependency&quot;</span>)
+coefficients &lt;-<span class="st"> </span>original_model<span class="op">$</span>coef 
+se &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcov</span>(original_model)))
+n &lt;-<span class="st"> </span><span class="dv">9374</span>
+lik &lt;-<span class="st"> </span><span class="kw">logLik</span>(original_model)
+gof &lt;-<span class="st"> </span><span class="kw">c</span>(lik, n)
+gof.names &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Log Likelihood&quot;</span>, <span class="st">&quot;N&quot;</span> )
+decimal.places &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="ot">FALSE</span>)
+
+<span class="kw">createTexreg</span>(
+    <span class="dt">coef.names =</span> coefficient.names, <span class="dt">coef =</span> coefficients, <span class="dt">se =</span> se,
+    <span class="dt">gof.names =</span> gof.names, <span class="dt">gof =</span> gof, <span class="dt">gof.decimal =</span> decimal.places)
+  
+}
+
+logit_mod &lt;-<span class="st"> </span><span class="kw">tex_reg_converter</span>(log_mod)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Put all the tables together</span>
+
+<span class="kw">htmlreg</span>(<span class="kw">list</span>(ed_mod, logit_mod, weib_mod_ph), <span class="dt">stars =</span> <span class="kw">c</span>(), <span class="dt">caption =</span> <span class="st">&quot;Models of Militarized Interventions&quot;</span>, <span class="dt">caption.above =</span> <span class="ot">TRUE</span>, <span class="dt">custom.model.names =</span> <span class="kw">c</span>(<span class="st">&quot;Conditional Logit&quot;</span>, <span class="st">&quot;Logit&quot;</span>, <span class="st">&quot;Weibull&quot;</span>), <span class="dt">center =</span> <span class="ot">FALSE</span>, <span class="dt">single.row =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">
+Models of Militarized Interventions
+</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b></b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Conditional Logit</b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Logit</b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Weibull</b>
+</th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Relative Capabilities
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.48 (0.16)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.43 (0.16)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.50 (0.15)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Territorial Contiguity
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.26 (0.11)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.25 (0.11)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.28 (0.10)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Intervenor Allied to Target
+</td>
+<td style="padding-right: 12px; border: none;">
+0.24 (0.10)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.22 (0.10)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.26 (0.10)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Intervenor Democracy
+</td>
+<td style="padding-right: 12px; border: none;">
+0.01 (0.01)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.01 (0.01)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.01 (0.01)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Target Democracy
+</td>
+<td style="padding-right: 12px; border: none;">
+0.02 (0.01)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.02 (0.01)
+</td>
+<td style="padding-right: 12px; border: none;">
+0.02 (0.01)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Breakdown of Authority
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.46 (0.21)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.43 (0.20)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.44 (0.20)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Constant
+</td>
+<td style="padding-right: 12px; border: none;">
+</td>
+<td style="padding-right: 12px; border: none;">
+-4.07 (0.13)
+</td>
+<td style="padding-right: 12px; border: none;">
+-1.32 (0.15)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Duration Dependency
+</td>
+<td style="padding-right: 12px; border: none;">
+</td>
+<td style="padding-right: 12px; border: none;">
+16.20 (0.95)
+</td>
+<td style="padding-right: 12px; border: none;">
+</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">
+Log Likelihood
+</td>
+<td style="border-top: 1px solid black;">
+-1591.49
+</td>
+<td style="border-top: 1px solid black;">
+-1779.31
+</td>
+<td style="border-top: 1px solid black;">
+-1931.50
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+N
+</td>
+<td style="padding-right: 12px; border: none;">
+520
+</td>
+<td style="padding-right: 12px; border: none;">
+9374
+</td>
+<td style="padding-right: 12px; border: none;">
+520
+</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">
+Shape Parameter
+</td>
+<td style="border-bottom: 2px solid black;">
+</td>
+<td style="border-bottom: 2px solid black;">
+</td>
+<td style="border-bottom: 2px solid black;">
+0.66
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="5">
+<span style="font-size:0.8em"></span>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="militarized-interventions-data-in-stata" class="section level2">
+<h2><span class="header-section-number">5.2</span> Militarized Interventions Data in Stata</h2>
+<p>Let’s load the dataset.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">/</span><span class="er">*</span><span class="st"> </span>Dataset is omifinal.dta <span class="op">*</span><span class="er">/</span>
+
+use <span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/omifinal2.dta&quot;</span></code></pre></div>
+<div id="table-5.3-1" class="section level3">
+<h3><span class="header-section-number">5.2.1</span> Table 5.3</h3>
+<p>Before we estimate the models, we want to mean center the intervenor democracy, target democracy, and relative capabilities covariates after removing the missing observations from a logit model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">/</span><span class="er">*</span><span class="st"> </span>First mean center quantitative variables <span class="op">*</span><span class="er">/</span>
+
+<span class="er">*</span><span class="st"> </span>To get sample estimates, create esample variable
+
+logit fail ctg  ali idem tdem pbal <span class="cf">break</span>
+
+gen insample=<span class="dv">1</span> <span class="cf">if</span> <span class="kw">e</span>(sample)
+
+egen meanidem=<span class="kw">mean</span>(idem)  <span class="cf">if</span> insample<span class="op">==</span><span class="dv">1</span>
+egen meantdem=<span class="kw">mean</span>(tdem) <span class="cf">if</span> insample<span class="op">==</span><span class="dv">1</span>
+egen meanpbal=<span class="kw">mean</span>(pbal) <span class="cf">if</span> insample<span class="op">==</span><span class="dv">1</span>
+
+gen idemmean=idem<span class="op">-</span>meanidem
+gen tdemmean=tdem<span class="op">-</span>meantdem
+gen pbalmean=pbal<span class="op">-</span>meanpbal</code></pre></div>
+<p>Now we can estimate the three models with the mean centered variables.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Estimate Cox model with exact discrete
+
+eststo clear 
+
+eststo<span class="op">:</span><span class="st"> </span>stcox pbalmean ctg ali idemmean tdemmean <span class="cf">break</span>, nohr exactp
+
+<span class="op">*</span><span class="st"> </span>Estimate a conditional logit through clogit. Should have same results as the Cox model with exact discrete, but with some dropped observations. We do not include this model <span class="cf">in</span> the final regression output.
+
+clogit event ctg ali idem tdem pbal <span class="cf">break</span>, <span class="kw">group</span>(durmths)
+
+<span class="op">*</span><span class="st"> </span>Estimate Logit Model with Lowess Term
+
+eststo<span class="op">:</span><span class="st"> </span>logit _d lowesst2 pbalmean ctg ali idemmean tdemmean <span class="cf">break</span>
+
+<span class="op">*</span><span class="st"> </span>Now estimate Weibull <span class="cf">for</span> comparison
+
+eststo<span class="op">:</span><span class="st"> </span>streg pbalmean ctg ali idemmean tdemmean <span class="cf">break</span>, nohr <span class="kw">dist</span>(weib)</code></pre></div>
+<p>We can generate the regression table for the three models.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Reset working directory to collect following output 
+
+cd <span class="op">~</span><span class="er">/</span>Dropbox<span class="op">/</span>github<span class="op">/</span>liwu<span class="op">-</span>gan.github.io<span class="op">/</span>chapter5
+
+<span class="op">*</span><span class="st"> </span>Generate regression table output 
+
+esttab using ch5_log_weib.html, replace <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">coeflabel</span>(  lowesst2 <span class="st">&quot;Duration Dependency&quot;</span>  ctg <span class="st">&quot;Territorial Contiguity&quot;</span> <span class="op">/</span><span class="er">//</span>
+<span class="st">                 </span>ali <span class="st">&quot;Intervenor Allied to Target&quot;</span> idemmean <span class="st">&quot;Intervenor Democracy&quot;</span> <span class="op">/</span><span class="er">//</span>
+<span class="st">                 </span>tdemmean <span class="st">&quot;Target Democracy&quot;</span> pbalmean <span class="st">&quot;Relative Capabilities&quot;</span> <span class="op">/</span><span class="er">//</span>
+<span class="st">                 </span><span class="cf">break</span> <span class="st">&quot;Breakdown of Authority&quot;</span> _cons <span class="st">&quot;Constant&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(Models of Militarized Interventions) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">mtitles</span>(<span class="st">&quot;Conditional Logit&quot;</span> <span class="st">&quot;Logit&quot;</span> <span class="st">&quot;Weibull&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">eqlabels</span>(<span class="st">&quot;&quot;</span>, none) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">b</span>(<span class="dv">2</span>) <span class="kw">se</span>(<span class="dv">2</span>) nostar <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">stats</span>(ll N, <span class="kw">label</span>(<span class="st">&quot;Log-Likelihood&quot;</span> <span class="st">&quot;&lt;em&gt;N&lt;/em&gt;&quot;</span>) <span class="kw">fmt</span>(<span class="dv">2</span> <span class="dv">0</span>)) </code></pre></div>
+<div class="figure">
+<img src="chapter5/ch5_log_weib.png" />
+
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="the-cox-proportional-hazards-model.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="issues-in-model-selection.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+},
+"search": false
+});
+});
+</script>
+
+</body>
+
+</html>

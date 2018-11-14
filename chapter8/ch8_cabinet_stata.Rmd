@@ -1,0 +1,402 @@
+---
+title: 'Chapter 8: Cabinet Data in Stata'
+output: html_document
+---
+
+```{r, include = FALSE}
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+```
+
+```{r, eval = FALSE, echo = FALSE}
+
+clear
+set more off
+
+/* Dataset is cabinet.dta */
+
+use "~/Dropbox/github/liwu-gan.github.io/dta/cabinet.dta"
+
+
+```
+
+### Figure 8.1
+
+First we run the Cox model with the exact discrete approximation and compute the martingale residuals.  
+
+```{r, eval = FALSE}
+
+stcox invest polar  numst format postelec caretakr, exactm nohr mgale(martingale) 
+
+```
+
+We calculate the Cox-Snell residuals in the following way. 
+
+```{r, eval = FALSE}
+*Use predict to derive Cox-Snell residuals*
+
+predict CoxSnell, csnell
+
+*Re-stset the data to treat the Cox-Snell residuals as "the data" (i.e. the time variable)*
+
+stset CoxSnell, fail(censor)
+
+*Generate the K-M estimates for the new data*
+
+sts generate km=s
+
+
+```
+
+Then we plot the the residuals on the x-axis and the integrated hazard oof the residuals on the y-axis, against a 45 degree line that serves as a reference line. If the model holds, the plot of the residuals agianst the integrated hazard should fall roughly on that line.
+
+
+```{r, eval = FALSE}
+*Generate the integrated hazard (using double option for increased computer precision)*
+
+gen double H_cs=-log(km) 
+
+*Reset working directory to output folder
+
+cd ~/Dropbox/github/liwu-gan.github.io/chapter8
+
+twoway (line H_cs CoxSnell, sort) (line CoxSnell CoxSnell, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Cox-Snell Residuals from Cabinet Data") ///
+    title("H(t) based on Cox-Snell Residuals", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_coxsnellcab.gph, replace)
+	
+graph export ch8_coxsnellcab.png, replace
+
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter8/ch8_coxsnellcab.png){}
+
+### Figure 8.2
+
+Before plotting the martingale residuals on the polarization index and formation attempts variables, we drop the variables from our previous analysis and re-stset the data. 
+
+```{r, eval = FALSE}
+
+*Drop previous data
+drop martingale CoxSnell H_cs km
+
+*Resetting the data to original form*
+
+stset durat, fail(censor)
+
+```
+
+We start with estimating the model for Approach 1.
+
+```{r, eval = FALSE}
+
+* Estimate model of interest
+
+stcox format polar, exactp nohr mgale(mg) 
+
+```
+
+Then we can plot the martingales and lowess term against either the polarization or formation attempts covoriate (Approach 1).
+
+```{r, eval = FALSE}
+
+twoway (scatter mg polar, sort mfcolor(white) mlcolor(black)) (lowess mg polar, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Polarization Index") ///
+    title("Martingale Residuals: Approach 1", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_polarff1.gph, replace)
+
+twoway (scatter mg format, sort mfcolor(white) mlcolor(black)) (lowess mg format, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Formation Attempts") ///
+    title("Martingale Residuals: Approach 1", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_formatff1.gph, replace)
+
+drop mg
+```
+
+Now we run two different models, one with only the formation attempts covariate and the other with only the polarization index covariate. From the first model, we plot the Martingale residuals and the smoothed residuals against the polarization variable while in the second, we plot the residuals against the formation attempts covariate. 
+
+```{r, eval = FALSE}
+
+* First estimate submodel
+
+stcox format, exactp nohr mgale(mg)
+
+* Plot of martingales vs. polarization variable with lowess term
+
+twoway (scatter mg polar, sort mfcolor(white) mlcolor(black)) (lowess mg polar, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Polarization Index") ///
+    title("Martingale Residuals: Approach 2", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_polarff2.gph, replace)
+
+drop mg
+
+* Now test for functional form of formation attempts
+
+stcox polar, exactp nohr mgale(mg)
+
+* Plot of martingales vs. formation attempts variable with lowess term	
+
+  twoway (scatter mg format, sort mfcolor(white) mlcolor(black)) (lowess mg format, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Formation Attempts") ///
+    title("Martingale Residuals: Approach 2", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_formatff2.gph, replace)
+
+drop mg
+
+```
+
+We combine all four graphs. In all four plots, we see mostly flat lines centered around 0, which indicates that no adjustments need to be made to the functional form 
+
+```{r, eval = FALSE}
+graph combine ch8_polarff1.gph ch8_formatff1.gph ch8_polarff2.gph ///
+ ch8_formatff2.gph, graphregion(color(white) ///
+icolor(none)) saving(ch8_funcformcab.gph, replace)
+
+graph export ch8_funcformcab.png, replace
+
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter8/ch8_funcformcab.png){
+}
+
+### Figure 8.6
+
+We want to plot the Cox-snell residuals on the x-axis and the integrated hazard function on the y-axis for a variety of parametric models. Let's start with the exponential.  
+```{r, eval = FALSE}
+
+streg invest polar  numst format postelec caretakr, dist(exp) time
+
+*Now compute Cox-Snell residuals*
+
+predict double cs, csnell
+
+*Now restset the data*
+
+stset cs, failure(censor)
+
+*Now generate K-M estimates*
+  
+sts generate km=s
+
+*Back out the estimated cumulative hazard:*
+
+gen double H=-log(km)
+
+*Graph functions*
+
+twoway (line H cs, sort) (line cs cs, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Exponential Model") ///
+    title("H(t) based on Cox-Snell Residuals", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_coxsnellexp.gph, replace)
+	
+drop H cs km 
+stset durat, fail(censor)
+
+```
+
+Let's estimate the Weibull next and calculate the Cox-snell residuals and integrated hazard. 
+
+```{r, eval = FALSE}
+
+streg invest polar  numst format postelec caretakr, dist(weibull) time
+
+*Now compute Cox-Snell residuals*
+
+predict double cs, csnell
+
+*Now restset the data*
+  
+stset cs, failure(censor)
+
+*Now generate K-M estimates*
+
+sts generate km=s
+
+*Back out the estimated cumulative hazard:*
+
+gen double H=-log(km)
+
+*Graph functions*
+
+twoway (line H cs, sort) (line cs cs, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Weibull Model") ///
+    title("H(t) based on Cox-Snell Residuals", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_coxsnellweib.gph, replace)
+
+drop H cs km 	
+stset durat, fail(censor)
+
+```
+
+We do the same for the log-log model.
+
+```{r, eval = FALSE}
+
+streg invest polar  numst format postelec caretakr, dist(loglog) 
+
+*Now compute Cox-Snell residuals*
+
+predict double cs, csnell
+
+*Now restset the data*
+
+stset cs, failure(censor)
+
+*Now generate K-M estimates*
+
+sts generate km=s
+
+*Back out the estimated cumulative hazard:*
+
+gen double H=-log(km)
+
+*Graph functions*
+
+twoway (line H cs, sort) (line cs cs, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Log-Logistic Model") ///
+    title("H(t) based on Cox-Snell Residuals", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_coxsnellll.gph, replace)
+
+drop H cs km 
+stset durat, fail(censor)
+
+```
+
+The log-normal model is next. 
+
+```{r, eval = FALSE}
+
+streg invest polar  numst format postelec caretakr, dist(lognorm) time
+
+*Now compute Cox-Snell residuals*
+
+predict double cs, csnell
+
+*Now restset the data*
+
+stset cs, failure(censor)
+
+*Now generate K-M estimates*
+
+sts generate km=s
+
+*Back out the estimated cumulative hazard:*
+
+gen double H=-log(km)
+
+*Graph functions*
+
+twoway (line H cs, sort) (line cs cs, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Log-Normal Model") ///
+    title("H(t) based on Cox-Snell Residuals", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_coxsnellln.gph, replace)
+	
+drop H cs km 
+stset durat, fail(censor)
+
+```
+
+Here is the gompertz model.
+
+```{r, eval = FALSE}
+
+streg invest polar  numst format postelec caretakr, dist(gompertz) nohr
+
+*Now compute Cox-Snell residuals*
+
+predict double cs, csnell
+
+*Now restset the data*
+
+stset cs, failure(censor)
+
+*Now generate K-M estimates*
+
+sts generate km=s
+
+*Back out the estimated cumulative hazard:*
+
+gen double H=-log(km)
+
+*Graph functions*
+
+twoway (line H cs, sort) (line cs cs, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Gompertz Model") ///
+    title("H(t) based on Cox-Snell Residuals", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_coxsnellgomp.gph, replace)
+	
+drop H cs km 
+stset durat, fail(censor)
+
+```
+
+
+Lastly, here is the generalized gamma model. 
+```{r, eval = FALSE}
+
+streg invest polar  numst format postelec caretakr, dist(ggamma) time
+
+*Now compute Cox-Snell residuals*
+
+predict double cs, csnell
+
+*Now restset the data*
+
+stset cs, failure(censor)
+
+*Now generate K-M estimates*
+
+sts generate km=s
+
+*Back out the estimated cumulative hazard:*
+
+gen double H=-log(km)
+
+*Graph functions*
+
+twoway (line H cs, sort) (line cs cs, sort lpattern(solid)), ///
+    legend(off) ///
+    xtitle("Generalized Gamma Model") ///
+    title("H(t) based on Cox-Snell Residuals", position(11)) ///
+    scheme(s2mono) graphregion(color(white) icolor(none)) ///
+    saving(ch8_coxsnellgg.gph, replace)
+	
+drop H cs km 
+
+```
+
+We can combine all six graphs. 
+
+```{r, eval = FALSE}
+
+graph combine ch8_coxsnellexp.gph ch8_coxsnellweib.gph ch8_coxsnellll.gph ///
+ ch8_coxsnellln.gph ch8_coxsnellgomp.gph ch8_coxsnellgg.gph, col(2) graphregion(color(white) ///
+icolor(none)) saving(ch8_coxsnellparm.gph, replace)
+
+graph export ch8_coxsnellparm.png, replace
+
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter8/ch8_coxsnellparm.png){
+}
+

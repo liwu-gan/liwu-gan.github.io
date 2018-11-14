@@ -1,0 +1,131 @@
+---
+title: 'Chapter 8: Cabinet Data in R'
+output: html_document
+
+---
+
+
+```{r, include = FALSE}
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+```
+
+```{r, include = FALSE}
+
+#---- Packages 
+library(foreign)
+library(survival)
+library(survminer)
+library(flexsurv)
+library(texreg)
+library(ggplot2)
+library(SurvRegCensCov)
+
+```
+
+```{r, include = FALSE}
+
+#-------Dataset
+cabinet <- read.dta("~/Dropbox/github/liwu-gan.github.io/dta/cabinet.dta")
+
+#--------Data prepation
+
+dv <- Surv(cabinet$durat, cabinet$'_d')
+
+```
+
+### Figure 8.1 
+
+First we run the Cox model with the exact discrete approximation.  
+```{r}
+
+ed_mod <- coxph(dv ~ invest + polar + numst + format + postelec + caretakr,
+                data = cabinet, ties = "exact")
+
+```
+
+We calculate the Cox-Snell residuals in the following way. Then we plot the residuals on the x-axis and the integrated hazard of the residuals on the y-axis, against a 45 degree line that serves as a reference line. If the model holds, the plot of the residuals agianst the integrated hazard should fall roughly on that line.
+
+```{r}
+# First we calculate Martingale residuals
+
+ed_resid <- resid(ed_mod, type="martingale")
+
+# We subtract these residuals from the actual values of the event to get the 
+# Cox-snell residuals.
+
+ed_res <- cabinet$'_d' - ed_resid
+
+# Compute S(t)
+
+ed_surv <- survfit(Surv(ed_res,cabinet$'_d')~1)
+
+# Plot the integrated hazard function, which is H(t) = -log(S(t)), on the y-axis
+
+plot(ed_surv$time, -log(ed_surv$surv), type = "l", xlab="Time", 
+     ylab = "H(t) based on Cox-Snell Residuals", main="Cox-Snell Residuals from Cabinet Data")
+lines(ed_res, ed_res, type = "l")
+
+```
+
+### Figure 8.2 
+
+We estimate the models that will be used for the figure and calculate their Martingale residuals. The goal is to assess the functional form of particular covariates. For example, can we assume that it is linear or are adjustments necessary?
+
+```{r}
+
+# The model for the top two panels of the figure. 
+
+mgale_mod <- coxph(dv ~ format + polar, data = cabinet, ties = "exact")
+
+# This model only has polarization covariate and will be used for the bottom right panel
+
+polar_mod <- coxph(dv ~ polar, data = cabinet)
+
+# This model only has the formation attempts covariate, and will be used for the bottom left panel.
+     
+format_mod <- coxph(dv ~ format, data = cabinet, ties = "exact")
+
+# Calculate Martingale residuals for each model 
+
+mgale_mod_resid <- resid(mgale_mod,type='martingale')
+
+polar_mod_resid <- resid(polar_mod,type='martingale')
+
+format_mod_resid <- resid(format_mod,type='martingale')
+
+```
+
+Now we are ready to plot. In all four panels, we plot the martingale residuals and the smoothed residuals using lowess against either the polarization and formation attempts covariates. The top two panels are based on a Cox model that includes both covoriates, the bottom right panel uses only the polarization covariate, and the bottom left panel uses only the formation attempts variable. In all four plots, we see mostly flat lines centered around 0, which indicates that no adjustments need to be made to the functional form 
+
+```{r}
+par(mfrow=c(2,2))
+
+# Plot Martingale residuals against the polarization covariate
+
+plot(cabinet$polar, mgale_mod_resid, xlab="Polarization Index", 
+      ylab = "Residuals", main="Martingale Residuals: Approach 1")
+      lines(lowess(cabinet$polar, mgale_mod_resid),col='red')
+
+# Plot Martingale residuals against the formation attempts covariate
+          
+plot(cabinet$format, mgale_mod_resid, xlab="Formation attempts", 
+     ylab = "Residuals", main="Martingale Residuals: Approach 1")
+     lines(lowess(cabinet$format, mgale_mod_resid),col='red')
+     
+# Plot Martingale residuals against the polarization covariate
+
+plot(cabinet$polar, format_mod_resid, xlab="Polarization index", 
+     ylab = "Residuals", main="Martingale Residuals: Approach 2")
+lines(lowess(cabinet$polar, format_mod_resid),col='red')
+
+# Plot Martingale residuals against the polarization covariate
+
+plot(cabinet$format, polar_mod_resid, xlab="Formation attempts", 
+     ylab = "Residuals", main="Martingale Residuals: Approach 2")
+lines(lowess(cabinet$format, polar_mod_resid),col='red')
+
+
+```
+
+

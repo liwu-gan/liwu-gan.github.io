@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="preface.html">
-<link rel="next" href="the-logic-of-event-history-analysis.html">
+<link rel="prev" href="diagnostic-methods-for-the-event-history-model.html">
+<link rel="next" href="models-for-multiple-events.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -200,16 +200,148 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="event-history-and-social-science" class="section level1">
-<h1><span class="header-section-number">1</span> Event History and Social Science</h1>
+<div id="some-modeling-strategies-for-unobserved-heterogeneity" class="section level1">
+<h1><span class="header-section-number">9</span> Some Modeling Strategies for Unobserved Heterogeneity</h1>
+<div id="conflict-data-in-r" class="section level2">
+<h2><span class="header-section-number">9.1</span> Conflict Data in R</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#-------Dataset</span>
+
+conflict &lt;-<span class="st"> </span><span class="kw">read.dta</span>(<span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/conflict.dta&quot;</span>)
+
+dv &lt;-<span class="st"> </span><span class="kw">Surv</span>(conflict<span class="op">$</span>start, conflict<span class="op">$</span>duration, conflict<span class="op">$</span>dispute)</code></pre></div>
+<div id="table-9.1" class="section level3">
+<h3><span class="header-section-number">9.1.1</span> Table 9.1</h3>
+<p>I run two models: a regular Cox model and one with an individual-level gamma frailty term. Because our unit of observation is at the dyad level, the frailty term will capture any unobserved heterogeneity arising from each observation that is not picked up by the explanatory variables. If the variance of the frailty is 0, we can accept the null hypothesis that there is no unobserved heterogeneity. As it is clearly not 0 and is statistically significant, we cat reject the hypothesis that there is no unobserved heterogeneity. As such, the results indicate that there is substantial heterogeneity in the data that is not accounted for by the six covariates.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Cox model</span>
+
+cox_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>democ <span class="op">+</span><span class="st"> </span>growth <span class="op">+</span><span class="st"> </span>allies <span class="op">+</span><span class="st"> </span>contig <span class="op">+</span><span class="st"> </span>capratio <span class="op">+</span><span class="st"> </span>trade,
+                 <span class="dt">data =</span> conflict, <span class="dt">robust =</span> <span class="ot">TRUE</span>)
+
+
+<span class="co"># Cox model with frailty term </span>
+
+frail_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>democ <span class="op">+</span><span class="st"> </span>growth <span class="op">+</span><span class="st"> </span>allies <span class="op">+</span><span class="st"> </span>contig <span class="op">+</span><span class="st"> </span>capratio <span class="op">+</span><span class="st"> </span>trade
+                     <span class="op">+</span><span class="st"> </span><span class="kw">frailty</span>(dyadid, <span class="dt">dist =</span> <span class="st">&quot;gamma&quot;</span>), <span class="dt">data =</span> conflict)</code></pre></div>
+<p>Here is the output, with the standard errors in parentheses:</p>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" align="center" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">
+Frailty Model of Conflict
+</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b></b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Cox</b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Cox with Gamma Frailty</b>
+</th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Democracy
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.44 (0.10)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.37 (0.11)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Growth
+</td>
+<td style="padding-right: 12px; border: none;">
+-3.23 (1.30)
+</td>
+<td style="padding-right: 12px; border: none;">
+-3.69 (1.30)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Alliance
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.41 (0.11)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.37 (0.13)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Contiguous
+</td>
+<td style="padding-right: 12px; border: none;">
+1.21 (0.13)
+</td>
+<td style="padding-right: 12px; border: none;">
+1.20 (0.13)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Capability Ratio
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.21 (0.06)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.20 (0.05)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Trade
+</td>
+<td style="padding-right: 12px; border: none;">
+-13.16 (11.41)
+</td>
+<td style="padding-right: 12px; border: none;">
+-3.04 (10.31)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Variance of the Random Effect
+</td>
+<td style="padding-right: 12px; border: none;">
+</td>
+<td style="padding-right: 12px; border: none;">
+708.95 (0.00)
+</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">
+N
+</td>
+<td style="border-top: 1px solid black;">
+20448
+</td>
+<td style="border-top: 1px solid black;">
+20448
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="4">
+<span style="font-size:0.8em"></span>
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="preface.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="the-logic-of-event-history-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="diagnostic-methods-for-the-event-history-model.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="models-for-multiple-events.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

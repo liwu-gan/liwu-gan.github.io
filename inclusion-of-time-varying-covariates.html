@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="preface.html">
-<link rel="next" href="the-logic-of-event-history-analysis.html">
+<link rel="prev" href="issues-in-model-selection.html">
+<link rel="next" href="diagnostic-methods-for-the-event-history-model.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -200,16 +200,275 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="event-history-and-social-science" class="section level1">
-<h1><span class="header-section-number">1</span> Event History and Social Science</h1>
+<div id="inclusion-of-time-varying-covariates" class="section level1">
+<h1><span class="header-section-number">7</span> Inclusion of Time-Varying Covariates</h1>
+<p>This chapter makes use of data on challenger entry in U.S. House elections.</p>
+<div id="warchest-data-in-stata" class="section level2">
+<h2><span class="header-section-number">7.1</span> Warchest Data in Stata</h2>
+<p>Let’s load the dataset. Because we are dealing with TVCs, we want to convert the data into start and stop time format. Creating the start variable invovles lagging the ‘te’ variable and replacing the missing values with 0. The ‘te’ variable represents the stop time. Once we have the data in the right format, we can stset the data for analysis.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Dataset is warchest.dta 
+
+use <span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/warchest.dta&quot;</span>
+
+<span class="op">*</span><span class="st"> </span>Create a lagged variable and replace the missing values with <span class="dv">0</span>
+
+by caseid<span class="op">:</span><span class="st"> </span>gen start =<span class="st"> </span>te[_n<span class="op">-</span><span class="dv">1</span>]
+
+replace start =<span class="st"> </span><span class="dv">0</span> <span class="cf">if</span> <span class="kw">missing</span>(start)
+
+<span class="op">*</span><span class="st"> </span>Prepare data <span class="cf">for</span> analysis 
+
+stset te, <span class="kw">failure</span>(cut_hi) <span class="kw">time0</span>(start)</code></pre></div>
+<div id="tables-7.4-and-7.5" class="section level3">
+<h3><span class="header-section-number">7.1.1</span> Tables 7.4 and 7.5</h3>
+<p>I run the Cox and Weibull propotional hazard models.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Estimate Cox model with Breslow ties
+
+eststo clear
+
+eststo<span class="op">:</span><span class="st"> </span>stcox south dem iv ec, nohr breslow
+
+<span class="op">*</span><span class="st"> </span>Estimate Weibull proportional hazards model  
+
+eststo<span class="op">:</span><span class="st"> </span>streg south dem iv ec, <span class="kw">dist</span>(weib) nohr</code></pre></div>
+<p>We can generate the results in a table now.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Reset working directory to collect following output 
+
+cd <span class="op">~</span><span class="er">/</span>Dropbox<span class="op">/</span>github<span class="op">/</span>liwu<span class="op">-</span>gan.github.io<span class="op">/</span>chapter7
+
+<span class="op">*</span><span class="st"> </span>Generate regression table output 
+
+esttab using ch7_warchest_cox_weib.html, replace <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">coeflabel</span>(south <span class="st">&quot;South&quot;</span> dem <span class="st">&quot;Party&quot;</span> iv <span class="st">&quot;Prior Vote&quot;</span> <span class="op">/</span><span class="er">//</span>
+<span class="st">                </span>ec <span class="st">&quot;War Chest&quot;</span> _cons <span class="st">&quot;Constant&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(Cox and Weibull Models of Challenger Deterrence) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">mtitles</span>(<span class="st">&quot;Cox&quot;</span> <span class="st">&quot;Weibull&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">eqlabels</span>(<span class="st">&quot;&quot;</span>, none) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">b</span>(<span class="dv">2</span>) <span class="kw">se</span>(<span class="dv">2</span>) nostar <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">stats</span>(ll N, <span class="kw">label</span>(<span class="st">&quot;Log-Likelihood&quot;</span> <span class="st">&quot;&lt;em&gt;N&lt;/em&gt;&quot;</span>) <span class="kw">fmt</span>(<span class="dv">2</span> <span class="dv">0</span>)) nogaps</code></pre></div>
+<p><img src="chapter7/ch7_warchest_cox_weib.png" /> ```</p>
+</div>
+</div>
+<div id="warchest-data-in-r" class="section level2">
+<h2><span class="header-section-number">7.2</span> Warchest Data in R</h2>
+<p>Let’s load the warchest data. For time-varying covariates (TVCs), we want to convert the data setup to a counting process with a start and stop time. By breaking up the data into discrete intervals, we can accomodate covariates that change value within each interval. For each interval, we also observe whether the observation has failed or survived.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#-------Dataset</span>
+
+warchest &lt;-<span class="st"> </span><span class="kw">read_dta</span>(<span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/warchest.dta&quot;</span>)
+
+<span class="co"># Take a look at dataset </span>
+
+<span class="kw">head</span>(warchest)</code></pre></div>
+<pre><code>## # A tibble: 6 x 7
+##      iv      ec caseid south   dem    te cut_hi
+##   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 0.620 0.00344    100     0     0    26      0
+## 2 0.620 0.0110     100     0     0    50      1
+## 3 0.590 0.143      201     1     0    26      0
+## 4 0.590 0.159      201     1     0    53      0
+## 5 0.590 0.203      201     1     0    65      0
+## 6 0.590 0.217      201     1     0    75      0</code></pre>
+<p>As we can see, the data right now only has information on how many weeks passes by for each observation (the ‘te’ variable). For example, caseid has two observations that are recorded at week 26 and week 50. We want to record this in counting process notation, which would signify a [0, 26] interval for the first observation and a [26,50] interval for the second.I lag the ‘te’ variable (which is the stop time) and replace the NAs with 0s, which records the start time.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#-------Data prepation</span>
+
+warchest &lt;-<span class="st"> </span>warchest <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(caseid) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">start =</span> <span class="kw">lag</span>(te)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">start =</span> <span class="kw">replace_na</span>(start, <span class="dv">0</span>)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rename</span>(<span class="dt">stop =</span> te) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(iv<span class="op">:</span>dem, start, stop, cut_hi)
+
+<span class="kw">head</span>(warchest)</code></pre></div>
+<pre><code>## # A tibble: 6 x 8
+## # Groups:   caseid [2]
+##      iv      ec caseid south   dem start  stop cut_hi
+##   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 0.620 0.00344    100     0     0     0    26      0
+## 2 0.620 0.0110     100     0     0    26    50      1
+## 3 0.590 0.143      201     1     0     0    26      0
+## 4 0.590 0.159      201     1     0    26    53      0
+## 5 0.590 0.203      201     1     0    53    65      0
+## 6 0.590 0.217      201     1     0    65    75      0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Specifying the survival object with the start and stop times and the event.</span>
+
+dv &lt;-<span class="st"> </span><span class="kw">Surv</span>(warchest<span class="op">$</span>start, warchest<span class="op">$</span>stop, warchest<span class="op">$</span>cut_hi)</code></pre></div>
+<div id="table-7.4" class="section level3">
+<h3><span class="header-section-number">7.2.1</span> Table 7.4</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Run Cox model with Breslow approximation </span>
+
+warchest_cox &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>south <span class="op">+</span><span class="st"> </span>dem <span class="op">+</span><span class="st"> </span>iv <span class="op">+</span><span class="st"> </span>ec,
+                      <span class="dt">data =</span> warchest, <span class="dt">ties =</span> <span class="st">&quot;breslow&quot;</span>)</code></pre></div>
+<p>Here is the output, with the standard errors in parentheses:</p>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">
+Cox Model of Challenger Deterrence
+</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b></b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b> </b>
+</th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+South
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.44 (0.42)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Party
+</td>
+<td style="padding-right: 12px; border: none;">
+0.23 (0.32)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Prior Vote
+</td>
+<td style="padding-right: 12px; border: none;">
+-6.97 (1.66)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+War Chest
+</td>
+<td style="padding-right: 12px; border: none;">
+-3.01 (1.39)
+</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">
+N
+</td>
+<td style="border-top: 1px solid black;">
+1376
+</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">
+Log Likelihood
+</td>
+<td style="border-bottom: 2px solid black;">
+-197.39
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="3">
+<span style="font-size:0.8em"></span>
+</td>
+</tr>
+</table>
+</div>
+<div id="table-7.5" class="section level3">
+<h3><span class="header-section-number">7.2.2</span> Table 7.5</h3>
+<p>The survreg function, which is typically used to run parametric survival models, cannot accomodate start-stop data structures. As such, I use the package ‘eha’ instead, using the phreg command to get run a proportional hazards Weibull model (Weibull is the default distribution, so I do not need to specify it).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">warchest_weib &lt;-<span class="st"> </span><span class="kw">phreg</span>(dv <span class="op">~</span><span class="st"> </span>south <span class="op">+</span><span class="st"> </span>dem <span class="op">+</span><span class="st"> </span>iv <span class="op">+</span><span class="st"> </span>ec, <span class="dt">data =</span> warchest)
+
+warchest_weib</code></pre></div>
+<pre><code>## Call:
+## phreg(formula = dv ~ south + dem + iv + ec, data = warchest)
+## 
+## Covariate          W.mean      Coef Exp(Coef)  se(Coef)    Wald p
+## south               0.256    -0.532     0.588     0.420     0.205 
+## dem                 0.607     0.231     1.260     0.324     0.476 
+## iv                  0.733    -6.443     0.002     1.629     0.000 
+## ec                  0.195    -2.583     0.076     1.380     0.061 
+## 
+## log(scale)                    3.189               0.449     0.000 
+## log(shape)                    0.890               0.143     0.000 
+## 
+## Events                    40 
+## Total time at risk         25359 
+## Max. log. likelihood      -272.2 
+## LR test statistic         29.83 
+## Degrees of freedom        4 
+## Overall p-value           5.29638e-06</code></pre>
+<p>I format the results into a regression table:</p>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">
+Weibull Model of Challenger Deterrence
+</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b></b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b> </b>
+</th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+South
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.53 (0.42)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Party
+</td>
+<td style="padding-right: 12px; border: none;">
+0.23 (0.32)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Prior Vote
+</td>
+<td style="padding-right: 12px; border: none;">
+-6.44 (1.66)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+War Chest
+</td>
+<td style="padding-right: 12px; border: none;">
+-2.58 (1.38)
+</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">
+Shape Parameter
+</td>
+<td style="border-top: 1px solid black;">
+2.43
+</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">
+N
+</td>
+<td style="border-bottom: 2px solid black;">
+1376
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="3">
+<span style="font-size:0.8em"></span>
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="preface.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="the-logic-of-event-history-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="issues-in-model-selection.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="diagnostic-methods-for-the-event-history-model.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

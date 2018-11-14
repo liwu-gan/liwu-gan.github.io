@@ -63,6 +63,94 @@ This chapter makes use of the cabinet data used in the previous chapter.
 
 ```
 
+# Models for Discrete Data 
+
+This chapter makes use of the International Military Interventions (IMI) dataset that has information on the duration of militarized interventions from 1946-1988 and a variety of covariates (from Pearson and Baumann 1993).
+
+## Militarized Interventions Data in R
+
+```{r, child = 'chapter5/ch5_imi.rmd'}
+
+```
+
+## Militarized Interventions Data in Stata
+
+```{r, child = 'chapter5/ch5_imi_stata.rmd'}
+
+```
+
+# Issues in Model Selection 
+
+This chapter makes use of data on the duration until state adoption of restrictive abortion legislation since the 1973 Roe vs. Wade Supreme Court decision (from Brace et al. 1999). 
+
+## Restrictive Abortion Legislation Data in R
+
+```{r, child = 'chapter6/ch6_adopt.rmd'}
+
+```
+
+## Restrictive Abortion Legislation Data in Stata
+
+```{r, child = 'chapter6/ch6_adopt_stata.rmd'}
+
+```
+
+# Inclusion of Time-Varying Covariates
+
+This chapter makes use of data on challenger entry in U.S. House elections.
+
+## Warchest Data in Stata 
+
+```{r, child = 'chapter7/ch7_warchest_stata.rmd'}
+
+```
+
+## Warchest Data in R
+
+```{r, child = 'chapter7/ch7_warchest.rmd'}
+
+```
+
+# Diagnostic Methods for the Event History Model
+
+This chapter makes use of the cabinet and international militarized interventions datasets used in previous chapters. 
+
+## Cabinet Data in R
+
+```{r, child = 'chapter8/ch8_cabinet.rmd'}
+
+```
+
+## Cabinet Data in Stata
+
+```{r, child = 'chapter8/ch8_cabinet_stata.rmd'}
+
+```
+
+## Militarized Interventions Data in R
+
+```{r, child = 'chapter8/ch8_imi.rmd'}
+
+```
+
+## Militarized Interventions Data in Stata
+
+```{r, child = 'chapter8/ch8_imi_stata.rmd'}
+
+```
+
+# Some Modeling Strategies for Unobserved Heterogeneity
+
+## Conflict Data in R
+
+```{r, child = 'chapter9/ch9_conflict.rmd'}
+
+```
+
+# Models for Multiple Events
+
+# The Social Sciences and Event History
+
 ```{r include=FALSE}
 # automatically create a bib database for R packages
 knitr::write_bib(c(

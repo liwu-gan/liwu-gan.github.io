@@ -1,0 +1,117 @@
+---
+title: 'Chapter 6: Restrictive Abortion Legislation Data in Stata'
+output: html_document
+---
+
+
+```{r, eval = FALSE, echo = FALSE}
+
+clear
+set more off
+
+```
+
+Let's load the dataset.
+```{r, eval = FALSE}
+
+/* Dataset is adopt_singleevent.dta */
+
+use "~/Dropbox/github/liwu-gan.github.io/dta/adopt_singleevent.dta"
+
+```
+
+### Table 6.1
+
+We begin by estimating the Cox and Weibull models, and storing the results to make a table. 
+
+```{r, eval = FALSE}
+
+* Cox model 
+
+eststo clear 
+
+eststo: stcox mooneymean, exactp nohr basehc(haz_cox)
+
+* Weibull model
+
+eststo: streg mooneymean, dist(weib) nohr
+
+* Reset working directory to collect output
+
+cd ~/Dropbox/github/liwu-gan.github.io/chapter6
+
+* Generate regression table output for Cox and Weibull 
+
+esttab using ch6_cox_weib.html, replace ///
+	coeflabel(mooneymean "Pre-Roe" _cons "Constant") ///
+	title(Models of Adoption of Restrictive Abortion Legislation) ///
+	mtitles("Cox Model" "Weibull Model") ///
+	eqlabels("", none) ///
+	b(2) se(2) nostar ///
+	stats(ll N, label("Log-Likelihood" "<em>N</em>") fmt(2 0)) 
+	
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter6/ch6_cox_weib.png){}
+
+Let's estimate the Royston-Parmar model in comparison, and display the results in a table.
+
+```{r, eval = FALSE}
+
+eststo clear 
+
+eststo:stpm mooneymean, scale(h) df(3)
+
+* Generate regression table output for Royston-Parmar model
+
+esttab using ch6_rp.html, replace ///
+	coeflabel(s0:_cons "Spline 1" s1:_cons "Spline 2" s2:_cons "Spline 3" xb:mooneymean "Pre-Roe" ///
+	xb:_cons "Constant") ///
+	title(Models of Adoption of Restrictive Abortion Legislation) ///
+	mtitles("Royston-Parmar Model") ///
+	eqlabels("", none) ///
+	b(2) se(2) nostar ///
+	stats(ll N, label("Log-Likelihood" "<em>N</em>") fmt(2 0)) 
+	
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter6/ch6_rp.png){}
+
+### Figure 6.1
+
+We already computed the baseline hazard for the Cox model earlier in the regression equation, so now we compute the baseline hazards for the Royston-Parmar and Weibull models. 
+
+```{r, eval = FALSE}
+
+
+* Compute baseline hazard for Royston-Parmar model 
+
+predict haz_rp, haz zero
+
+* Compute baseline hazard for Weibull based on P.H. parameterization.
+
+streg mooneymean, dist(weib) time
+
+* First, note that lambda=exp(-beta'x).  We can compute lambda for each confict type.
+
+gen lambda_base=exp(-(_b[_cons])) if e(sample)
+
+* Second, note that h(t)=lambda*p*(lambda*t)^(p-1).  We can generate the hazard rate for the baseline.
+
+gen haz_weib=lambda_base*e(aux_p)*(lambda_base*yrtoadp)^(e(aux_p)-1)
+
+twoway (line haz_rp yrtoadp, sort lpattern(solid)) (line haz_weib yrtoadp, sort lpattern(solid)) ///
+	(line haz_cox yrtoadp, sort connect(stairstep) lpattern(solid)), ///
+	legend(off) ///
+	xtitle("Years Since Roe vs. Wade") ///
+	title("Hazard Functions", position(11)) ///
+	scheme(s2mono) graphregion(color(white) icolor(none)) ///
+	saving(hazadopt.gph, replace)
+
+graph export ch6_hazadopt.png, replace
+
+```
+
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter6/ch6_hazadopt.png){
+

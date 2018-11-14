@@ -1,0 +1,301 @@
+---
+title: 'Chapter 5: Militarized Interventions Dataset in R'
+output: html_document
+---
+
+```{r, include = FALSE}
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+```
+
+```{r, include = FALSE}
+
+#---- Packages 
+library(foreign)
+library(survival)
+library(survminer)
+library(flexsurv)
+library(texreg)
+library(ggplot2)
+library(SurvRegCensCov)
+library(tidyr)
+
+```
+
+Note that for two of the models, the replication of Table 5.3 will be based on the smaller dataset (which I name "imi") than the one shown in Stata and in the book. This is because the exact discrete Cox model using the larger dataset ("imi2") is too computionally intense for R to estimate within a reasonable time. In addition, the Weibull model cannot handle start-stop Surv objects. Nevertheless, the results using the smaller dataset are essentially the same so I still reproduce them below. 
+
+First, we prepare both the large and small datasets for analysis by renaming certain variables to avoid conflicting with R's base functions, creating the Surv object, and creating mean centered variables for analysis of the larger dataset. 
+
+
+```{r}
+
+#-------Dataset
+
+# This is the dataset used in the Stata version, but because it takes so long to run, one can get the same results with the smaller dataset. This is important when running the exact discrete Cox model, because that model is computationally intense. 
+
+imi2 <- read.dta("~/Dropbox/github/liwu-gan.github.io/dta/omifinal2.dta")
+
+
+imi <- read.dta("~/Dropbox/github/liwu-gan.github.io/dta/omismall.dta")
+
+
+#-------Data prepation
+
+# Rename dependent variable for both datasets to avoid confusion with base R functions
+
+names(imi2)[names(imi2) == 'break'] <- 'breakdown'
+
+# Create survival object for dv in the larger dataset
+
+dv2 <- Surv(imi2$'_t0', imi2$'_t', imi2$event)
+
+# Create survival object for dv in the smller dataset
+
+dv <- Surv(imi$'_t', imi$'_d')
+
+# We want to only run the models on the data that has no missing observations for the following logit equation. 
+
+#m1 <- glm(fail ~ ctg + ali + idem + tdem + pbal + breakdown, data = imi2)
+
+imi2 <- imi2 %>% 
+  drop_na(fail, ctg, ali, idem, tdem, pbal, breakdown)
+
+
+# Lastly, we mean center the pbal, idem, and tdem variables.
+
+imi2$idemmean <- imi2$idem - mean(imi2$idem)
+
+imi2$tdemmean <- imi2$tdem - mean(imi2$tdem)
+
+imi2$pbalmean <- imi2$pbal - mean(imi2$pbal)
+
+```
+
+
+### Table 5.3
+
+We first run the Cox exact discrete model (which is essentially the same as the conditoinal logit except it does not drop observations) and the Weibull model using the smaller dataset. 
+
+```{r}
+
+# Cox exact discrete
+
+ed_mod <- coxph(dv ~ pbal + ctg + ali + idem + tdem + breakdown, data = imi, ties = "exact")
+
+# Weibull A.F.T. 
+
+weib_mod <- survreg(dv ~ pbal + ctg + ali + idem + tdem + breakdown, data = imi, dist = "weibull")
+
+
+```
+
+Again, we have to convert the Weibull A.F.T. to a P.H. parameterization.
+
+```{r}
+# Conversion from Weibull A.F.T.  to P.H. 
+
+intercept <- rep(1, 656)
+
+imi$intercept <- intercept
+
+weib_mod1 <- survreg(dv ~ 0 + intercept +  pbal + ctg + ali + idem + tdem + breakdown, data = imi, dist = "weibull")
+
+weib_mod2 <- survreg(dv ~ 0 + pbal + intercept +  ctg + ali + idem + tdem + breakdown, data = imi, dist = "weibull")
+
+weib_mod1_ph <- ConvertWeibull(weib_mod1)
+
+weib_mod2_ph <- ConvertWeibull(weib_mod2)
+
+weib_ph <- rbind(weib_mod1_ph$vars, weib_mod2_ph$vars)
+
+# Delete rows that are redundant/unnecessary 
+weib_ph <- weib_ph[-c(1,2,9,12,13,14,15,16),]
+
+weib_ph <- weib_ph[c("intercept", "pbal", "ctg", "ali", "idem", "tdem",
+                     "breakdown", "gamma"),]
+
+weib_ph
+
+```
+
+
+Let's format these models into a presentable table. I show how to do this for the exact discrete model and repeat the same steps for the Weibull (not shown).
+
+```{r}
+
+# Create texreg object for exact discrete/conditional logit model. 
+
+tex_reg_converter <- function(original_model){
+  
+  
+  coefficient.names <- c("Relative Capabilities", "Territorial Contiguity", "Intervenor Allied to Target", "Intervenor Democracy", "Target Democracy",
+                       "Breakdown of Authority")
+  coefficients <- original_model$coef 
+  se <- sqrt(diag(vcov(original_model)))
+  n <- original_model$n
+  lik <- logLik(original_model)
+  gof <- c(lik, n)
+  gof.names <- c("Log Likelihood", "N" )
+  decimal.places <- c(TRUE, FALSE)
+  
+  createTexreg(
+    coef.names = coefficient.names, coef = coefficients, se = se,
+    gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+  
+}
+
+ed_mod <- tex_reg_converter(ed_mod)
+```
+
+
+```{r, include = FALSE}
+# Create texreg object for Weibull Prop. Hazards model 
+
+tex_reg_converter <- function(original_model){
+
+coefficient.names <- c("Constant","Relative Capabilities", "Territorial Contiguity", "Intervenor Allied to Target", "Intervenor Democracy", "Target Democracy",
+                       "Breakdown of Authority")
+coefficients <- c(-1.32, -.50, -.28, .26, .01, .02, -.44)
+se <- c(.15, .15, .10, .10, .01, .01, .20)
+shape <- .66
+n <- 520
+lik <- logLik(original_model)
+gof <- c(shape, lik, n)
+gof.names <- c("Shape Parameter", "Log Likelihood", "N" )
+decimal.places <- c(TRUE, TRUE, FALSE)
+
+createTexreg(
+    coef.names = coefficient.names, coef = coefficients, se = se,
+    gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+  
+}
+
+
+weib_mod_ph <- tex_reg_converter(weib_mod)
+ 
+
+```
+
+Now we can run the logit model with the lowess term using the large dataset. 
+
+```{r}
+
+
+log_mod <- glm(event ~ pbalmean + ctg + ali + idemmean + tdemmean + breakdown + lowesst2, data = imi2, family = "binomial")
+
+
+```
+
+We format the results of the logit and put them together with the Cox and Weibull results. 
+
+```{r}
+
+tex_reg_converter <- function(original_model){
+
+coefficient.names <- c("Constant","Relative Capabilities", "Territorial Contiguity", "Intervenor Allied to Target", "Intervenor Democracy", "Target Democracy", "Breakdown of Authority", "Duration Dependency")
+coefficients <- original_model$coef 
+se <- sqrt(diag(vcov(original_model)))
+n <- 9374
+lik <- logLik(original_model)
+gof <- c(lik, n)
+gof.names <- c("Log Likelihood", "N" )
+decimal.places <- c(TRUE, FALSE)
+
+createTexreg(
+    coef.names = coefficient.names, coef = coefficients, se = se,
+    gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+  
+}
+
+logit_mod <- tex_reg_converter(log_mod)
+ 
+```
+
+```{r, results = "hide"}
+# Put all the tables together
+
+htmlreg(list(ed_mod, logit_mod, weib_mod_ph), stars = c(), caption = "Models of Militarized Interventions", caption.above = TRUE, custom.model.names = c("Conditional Logit", "Logit", "Weibull"), center = FALSE, single.row = TRUE)
+
+```
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">Models of Militarized Interventions</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b></b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b>Conditional Logit</b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b>Logit</b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b>Weibull</b></th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Relative Capabilities</td>
+<td style="padding-right: 12px; border: none;">-0.48 (0.16)</td>
+<td style="padding-right: 12px; border: none;">-0.43 (0.16)</td>
+<td style="padding-right: 12px; border: none;">-0.50 (0.15)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Territorial Contiguity</td>
+<td style="padding-right: 12px; border: none;">-0.26 (0.11)</td>
+<td style="padding-right: 12px; border: none;">-0.25 (0.11)</td>
+<td style="padding-right: 12px; border: none;">-0.28 (0.10)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Intervenor Allied to Target</td>
+<td style="padding-right: 12px; border: none;">0.24 (0.10)</td>
+<td style="padding-right: 12px; border: none;">0.22 (0.10)</td>
+<td style="padding-right: 12px; border: none;">0.26 (0.10)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Intervenor Democracy</td>
+<td style="padding-right: 12px; border: none;">0.01 (0.01)</td>
+<td style="padding-right: 12px; border: none;">0.01 (0.01)</td>
+<td style="padding-right: 12px; border: none;">0.01 (0.01)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Target Democracy</td>
+<td style="padding-right: 12px; border: none;">0.02 (0.01)</td>
+<td style="padding-right: 12px; border: none;">0.02 (0.01)</td>
+<td style="padding-right: 12px; border: none;">0.02 (0.01)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Breakdown of Authority</td>
+<td style="padding-right: 12px; border: none;">-0.46 (0.21)</td>
+<td style="padding-right: 12px; border: none;">-0.43 (0.20)</td>
+<td style="padding-right: 12px; border: none;">-0.44 (0.20)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Constant</td>
+<td style="padding-right: 12px; border: none;"></td>
+<td style="padding-right: 12px; border: none;">-4.07 (0.13)</td>
+<td style="padding-right: 12px; border: none;">-1.32 (0.15)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Duration Dependency</td>
+<td style="padding-right: 12px; border: none;"></td>
+<td style="padding-right: 12px; border: none;">16.20 (0.95)</td>
+<td style="padding-right: 12px; border: none;"></td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">Log Likelihood</td>
+<td style="border-top: 1px solid black;">-1591.49</td>
+<td style="border-top: 1px solid black;">-1779.31</td>
+<td style="border-top: 1px solid black;">-1931.50</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">N</td>
+<td style="padding-right: 12px; border: none;">520</td>
+<td style="padding-right: 12px; border: none;">9374</td>
+<td style="padding-right: 12px; border: none;">520</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">Shape Parameter</td>
+<td style="border-bottom: 2px solid black;"></td>
+<td style="border-bottom: 2px solid black;"></td>
+<td style="border-bottom: 2px solid black;">0.66</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="5"><span style="font-size:0.8em"></span></td>
+</tr>
+</table>
+
+

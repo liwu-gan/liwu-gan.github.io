@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Event History Modeling: A Guide for Social Scientists</title>
+  <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook.">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Event History Modeling: A Guide for Social Scientists" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Event History Modeling: A Guide for Social Scientists" />
+  
+  <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  
+
+<meta name="author" content="Janet M. Box-Steffensmeier, Bradford S. Jones, David Darmofal">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="inclusion-of-time-varying-covariates.html">
+<link rel="next" href="some-modeling-strategies-for-unobserved-heterogeneity.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="preface.html"><a href="preface.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="event-history-and-social-science.html"><a href="event-history-and-social-science.html"><i class="fa fa-check"></i><b>1</b> Event History and Social Science</a></li>
+<li class="chapter" data-level="2" data-path="the-logic-of-event-history-analysis.html"><a href="the-logic-of-event-history-analysis.html"><i class="fa fa-check"></i><b>2</b> The Logic of Event History Analysis</a></li>
+<li class="chapter" data-level="3" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html"><i class="fa fa-check"></i><b>3</b> Parametric Models for Single-Spell Duration Data</a><ul>
+<li class="chapter" data-level="3.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#un-data-in-r"><i class="fa fa-check"></i><b>3.1</b> UN Data in R</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.1"><i class="fa fa-check"></i><b>3.1.1</b> Table 3.1</a></li>
+<li class="chapter" data-level="3.1.2" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#figure-3.1"><i class="fa fa-check"></i><b>3.1.2</b> Figure 3.1</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#un-data-in-stata"><i class="fa fa-check"></i><b>3.2</b> UN Data in Stata</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.1-1"><i class="fa fa-check"></i><b>3.2.1</b> Table 3.1</a></li>
+<li class="chapter" data-level="3.2.2" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#figure-3.1-1"><i class="fa fa-check"></i><b>3.2.2</b> Figure 3.1</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#cabinet-data-in-r"><i class="fa fa-check"></i><b>3.3</b> Cabinet Data in R</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.3"><i class="fa fa-check"></i><b>3.3.1</b> Table 3.3</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#cabinet-data-in-stata"><i class="fa fa-check"></i><b>3.4</b> Cabinet Data in Stata</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="parametric-models-for-single-spell-duration-data.html"><a href="parametric-models-for-single-spell-duration-data.html#table-3.3-1"><i class="fa fa-check"></i><b>3.4.1</b> Table 3.3</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html"><i class="fa fa-check"></i><b>4</b> The Cox Proportional Hazards Model</a><ul>
+<li class="chapter" data-level="4.1" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#cabinet-data-in-r-1"><i class="fa fa-check"></i><b>4.1</b> Cabinet Data in R</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.4"><i class="fa fa-check"></i><b>4.1.1</b> Table 4.4</a></li>
+<li class="chapter" data-level="4.1.2" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.5"><i class="fa fa-check"></i><b>4.1.2</b> Table 4.5</a></li>
+<li class="chapter" data-level="4.1.3" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#figure-4.1"><i class="fa fa-check"></i><b>4.1.3</b> Figure 4.1</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#cabinet-data-in-stata-1"><i class="fa fa-check"></i><b>4.2</b> Cabinet Data in Stata</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.4-1"><i class="fa fa-check"></i><b>4.2.1</b> Table 4.4</a></li>
+<li class="chapter" data-level="4.2.2" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#table-4.5-1"><i class="fa fa-check"></i><b>4.2.2</b> Table 4.5</a></li>
+<li class="chapter" data-level="4.2.3" data-path="the-cox-proportional-hazards-model.html"><a href="the-cox-proportional-hazards-model.html#figure-4.1-1"><i class="fa fa-check"></i><b>4.2.3</b> Figure 4.1</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="models-for-discrete-data.html"><a href="models-for-discrete-data.html"><i class="fa fa-check"></i><b>5</b> Models for Discrete Data</a><ul>
+<li class="chapter" data-level="5.1" data-path="models-for-discrete-data.html"><a href="models-for-discrete-data.html#militarized-interventions-data-in-r"><i class="fa fa-check"></i><b>5.1</b> Militarized Interventions Data in R</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="models-for-discrete-data.html"><a href="models-for-discrete-data.html#table-5.3"><i class="fa fa-check"></i><b>5.1.1</b> Table 5.3</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="models-for-discrete-data.html"><a href="models-for-discrete-data.html#militarized-interventions-data-in-stata"><i class="fa fa-check"></i><b>5.2</b> Militarized Interventions Data in Stata</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="models-for-discrete-data.html"><a href="models-for-discrete-data.html#table-5.3-1"><i class="fa fa-check"></i><b>5.2.1</b> Table 5.3</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html"><i class="fa fa-check"></i><b>6</b> Issues in Model Selection</a><ul>
+<li class="chapter" data-level="6.1" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#restrictive-abortion-legislation-data-in-r"><i class="fa fa-check"></i><b>6.1</b> Restrictive Abortion Legislation Data in R</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#table-6.1"><i class="fa fa-check"></i><b>6.1.1</b> Table 6.1</a></li>
+<li class="chapter" data-level="6.1.2" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#figure-6.1"><i class="fa fa-check"></i><b>6.1.2</b> Figure 6.1</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#restrictive-abortion-legislation-data-in-stata"><i class="fa fa-check"></i><b>6.2</b> Restrictive Abortion Legislation Data in Stata</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#table-6.1-1"><i class="fa fa-check"></i><b>6.2.1</b> Table 6.1</a></li>
+<li class="chapter" data-level="6.2.2" data-path="issues-in-model-selection.html"><a href="issues-in-model-selection.html#figure-6.1-1"><i class="fa fa-check"></i><b>6.2.2</b> Figure 6.1</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html"><i class="fa fa-check"></i><b>7</b> Inclusion of Time-Varying Covariates</a><ul>
+<li class="chapter" data-level="7.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-stata"><i class="fa fa-check"></i><b>7.1</b> Warchest Data in Stata</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#tables-7.4-and-7.5"><i class="fa fa-check"></i><b>7.1.1</b> Tables 7.4 and 7.5</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-r"><i class="fa fa-check"></i><b>7.2</b> Warchest Data in R</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.4"><i class="fa fa-check"></i><b>7.2.1</b> Table 7.4</a></li>
+<li class="chapter" data-level="7.2.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.5"><i class="fa fa-check"></i><b>7.2.2</b> Table 7.5</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html"><i class="fa fa-check"></i><b>8</b> Diagnostic Methods for the Event History Model</a><ul>
+<li class="chapter" data-level="8.1" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#cabinet-data-in-r-2"><i class="fa fa-check"></i><b>8.1</b> Cabinet Data in R</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.1"><i class="fa fa-check"></i><b>8.1.1</b> Figure 8.1</a></li>
+<li class="chapter" data-level="8.1.2" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.2"><i class="fa fa-check"></i><b>8.1.2</b> Figure 8.2</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#cabinet-data-in-stata-2"><i class="fa fa-check"></i><b>8.2</b> Cabinet Data in Stata</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.1-1"><i class="fa fa-check"></i><b>8.2.1</b> Figure 8.1</a></li>
+<li class="chapter" data-level="8.2.2" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.2-1"><i class="fa fa-check"></i><b>8.2.2</b> Figure 8.2</a></li>
+<li class="chapter" data-level="8.2.3" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.6"><i class="fa fa-check"></i><b>8.2.3</b> Figure 8.6</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#militarized-interventions-data-in-r-1"><i class="fa fa-check"></i><b>8.3</b> Militarized Interventions Data in R</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.3"><i class="fa fa-check"></i><b>8.3.1</b> Figure 8.3</a></li>
+<li class="chapter" data-level="8.3.2" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.4"><i class="fa fa-check"></i><b>8.3.2</b> Figure 8.4</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#militarized-interventions-data-in-stata-1"><i class="fa fa-check"></i><b>8.4</b> Militarized Interventions Data in Stata</a><ul>
+<li class="chapter" data-level="8.4.1" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.3-1"><i class="fa fa-check"></i><b>8.4.1</b> Figure 8.3</a></li>
+<li class="chapter" data-level="8.4.2" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.4-1"><i class="fa fa-check"></i><b>8.4.2</b> Figure 8.4</a></li>
+<li class="chapter" data-level="8.4.3" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html#figure-8.5"><i class="fa fa-check"></i><b>8.4.3</b> Figure 8.5</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="some-modeling-strategies-for-unobserved-heterogeneity.html"><a href="some-modeling-strategies-for-unobserved-heterogeneity.html"><i class="fa fa-check"></i><b>9</b> Some Modeling Strategies for Unobserved Heterogeneity</a><ul>
+<li class="chapter" data-level="9.1" data-path="some-modeling-strategies-for-unobserved-heterogeneity.html"><a href="some-modeling-strategies-for-unobserved-heterogeneity.html#conflict-data-in-r"><i class="fa fa-check"></i><b>9.1</b> Conflict Data in R</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="some-modeling-strategies-for-unobserved-heterogeneity.html"><a href="some-modeling-strategies-for-unobserved-heterogeneity.html#table-9.1"><i class="fa fa-check"></i><b>9.1.1</b> Table 9.1</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="models-for-multiple-events.html"><a href="models-for-multiple-events.html"><i class="fa fa-check"></i><b>10</b> Models for Multiple Events</a></li>
+<li class="chapter" data-level="11" data-path="the-social-sciences-and-event-history.html"><a href="the-social-sciences-and-event-history.html"><i class="fa fa-check"></i><b>11</b> The Social Sciences and Event History</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Event History Modeling: A Guide for Social Scientists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="diagnostic-methods-for-the-event-history-model" class="section level1">
+<h1><span class="header-section-number">8</span> Diagnostic Methods for the Event History Model</h1>
+<p>This chapter makes use of the cabinet and international militarized interventions datasets used in previous chapters.</p>
+<div id="cabinet-data-in-r-2" class="section level2">
+<h2><span class="header-section-number">8.1</span> Cabinet Data in R</h2>
+<div id="figure-8.1" class="section level3">
+<h3><span class="header-section-number">8.1.1</span> Figure 8.1</h3>
+<p>First we run the Cox model with the exact discrete approximation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ed_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>invest <span class="op">+</span><span class="st"> </span>polar <span class="op">+</span><span class="st"> </span>numst <span class="op">+</span><span class="st"> </span>format <span class="op">+</span><span class="st"> </span>postelec <span class="op">+</span><span class="st"> </span>caretakr,
+                <span class="dt">data =</span> cabinet, <span class="dt">ties =</span> <span class="st">&quot;exact&quot;</span>)</code></pre></div>
+<p>We calculate the Cox-Snell residuals in the following way. Then we plot the residuals on the x-axis and the integrated hazard of the residuals on the y-axis, against a 45 degree line that serves as a reference line. If the model holds, the plot of the residuals agianst the integrated hazard should fall roughly on that line.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># First we calculate Martingale residuals</span>
+
+ed_resid &lt;-<span class="st"> </span><span class="kw">resid</span>(ed_mod, <span class="dt">type=</span><span class="st">&quot;martingale&quot;</span>)
+
+<span class="co"># We subtract these residuals from the actual values of the event to get the </span>
+<span class="co"># Cox-snell residuals.</span>
+
+ed_res &lt;-<span class="st"> </span>cabinet<span class="op">$</span><span class="st">&#39;_d&#39;</span> <span class="op">-</span><span class="st"> </span>ed_resid
+
+<span class="co"># Compute S(t)</span>
+
+ed_surv &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(ed_res,cabinet<span class="op">$</span><span class="st">&#39;_d&#39;</span>)<span class="op">~</span><span class="dv">1</span>)
+
+<span class="co"># Plot the integrated hazard function, which is H(t) = -log(S(t)), on the y-axis</span>
+
+<span class="kw">plot</span>(ed_surv<span class="op">$</span>time, <span class="op">-</span><span class="kw">log</span>(ed_surv<span class="op">$</span>surv), <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Time&quot;</span>, 
+     <span class="dt">ylab =</span> <span class="st">&quot;H(t) based on Cox-Snell Residuals&quot;</span>, <span class="dt">main=</span><span class="st">&quot;Cox-Snell Residuals from Cabinet Data&quot;</span>)
+<span class="kw">lines</span>(ed_res, ed_res, <span class="dt">type =</span> <span class="st">&quot;l&quot;</span>)</code></pre></div>
+<p><img src="event_history_files/figure-html/unnamed-chunk-123-1.png" width="672" /></p>
+</div>
+<div id="figure-8.2" class="section level3">
+<h3><span class="header-section-number">8.1.2</span> Figure 8.2</h3>
+<p>We estimate the models that will be used for the figure and calculate their Martingale residuals. The goal is to assess the functional form of particular covariates. For example, can we assume that it is linear or are adjustments necessary?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The model for the top two panels of the figure. </span>
+
+mgale_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>format <span class="op">+</span><span class="st"> </span>polar, <span class="dt">data =</span> cabinet, <span class="dt">ties =</span> <span class="st">&quot;exact&quot;</span>)
+
+<span class="co"># This model only has polarization covariate and will be used for the bottom right panel</span>
+
+polar_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>polar, <span class="dt">data =</span> cabinet)
+
+<span class="co"># This model only has the formation attempts covariate, and will be used for the bottom left panel.</span>
+     
+format_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>format, <span class="dt">data =</span> cabinet, <span class="dt">ties =</span> <span class="st">&quot;exact&quot;</span>)
+
+<span class="co"># Calculate Martingale residuals for each model </span>
+
+mgale_mod_resid &lt;-<span class="st"> </span><span class="kw">resid</span>(mgale_mod,<span class="dt">type=</span><span class="st">&#39;martingale&#39;</span>)
+
+polar_mod_resid &lt;-<span class="st"> </span><span class="kw">resid</span>(polar_mod,<span class="dt">type=</span><span class="st">&#39;martingale&#39;</span>)
+
+format_mod_resid &lt;-<span class="st"> </span><span class="kw">resid</span>(format_mod,<span class="dt">type=</span><span class="st">&#39;martingale&#39;</span>)</code></pre></div>
+<p>Now we are ready to plot. In all four panels, we plot the martingale residuals and the smoothed residuals using lowess against either the polarization and formation attempts covariates. The top two panels are based on a Cox model that includes both covoriates, the bottom right panel uses only the polarization covariate, and the bottom left panel uses only the formation attempts variable. In all four plots, we see mostly flat lines centered around 0, which indicates that no adjustments need to be made to the functional form</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))
+
+<span class="co"># Plot Martingale residuals against the polarization covariate</span>
+
+<span class="kw">plot</span>(cabinet<span class="op">$</span>polar, mgale_mod_resid, <span class="dt">xlab=</span><span class="st">&quot;Polarization Index&quot;</span>, 
+      <span class="dt">ylab =</span> <span class="st">&quot;Residuals&quot;</span>, <span class="dt">main=</span><span class="st">&quot;Martingale Residuals: Approach 1&quot;</span>)
+      <span class="kw">lines</span>(<span class="kw">lowess</span>(cabinet<span class="op">$</span>polar, mgale_mod_resid),<span class="dt">col=</span><span class="st">&#39;red&#39;</span>)
+
+<span class="co"># Plot Martingale residuals against the formation attempts covariate</span>
+          
+<span class="kw">plot</span>(cabinet<span class="op">$</span>format, mgale_mod_resid, <span class="dt">xlab=</span><span class="st">&quot;Formation attempts&quot;</span>, 
+     <span class="dt">ylab =</span> <span class="st">&quot;Residuals&quot;</span>, <span class="dt">main=</span><span class="st">&quot;Martingale Residuals: Approach 1&quot;</span>)
+     <span class="kw">lines</span>(<span class="kw">lowess</span>(cabinet<span class="op">$</span>format, mgale_mod_resid),<span class="dt">col=</span><span class="st">&#39;red&#39;</span>)
+     
+<span class="co"># Plot Martingale residuals against the polarization covariate</span>
+
+<span class="kw">plot</span>(cabinet<span class="op">$</span>polar, format_mod_resid, <span class="dt">xlab=</span><span class="st">&quot;Polarization index&quot;</span>, 
+     <span class="dt">ylab =</span> <span class="st">&quot;Residuals&quot;</span>, <span class="dt">main=</span><span class="st">&quot;Martingale Residuals: Approach 2&quot;</span>)
+<span class="kw">lines</span>(<span class="kw">lowess</span>(cabinet<span class="op">$</span>polar, format_mod_resid),<span class="dt">col=</span><span class="st">&#39;red&#39;</span>)
+
+<span class="co"># Plot Martingale residuals against the polarization covariate</span>
+
+<span class="kw">plot</span>(cabinet<span class="op">$</span>format, polar_mod_resid, <span class="dt">xlab=</span><span class="st">&quot;Formation attempts&quot;</span>, 
+     <span class="dt">ylab =</span> <span class="st">&quot;Residuals&quot;</span>, <span class="dt">main=</span><span class="st">&quot;Martingale Residuals: Approach 2&quot;</span>)
+<span class="kw">lines</span>(<span class="kw">lowess</span>(cabinet<span class="op">$</span>format, polar_mod_resid),<span class="dt">col=</span><span class="st">&#39;red&#39;</span>)</code></pre></div>
+<p><img src="event_history_files/figure-html/unnamed-chunk-125-1.png" width="672" /></p>
+</div>
+</div>
+<div id="cabinet-data-in-stata-2" class="section level2">
+<h2><span class="header-section-number">8.2</span> Cabinet Data in Stata</h2>
+<div id="figure-8.1-1" class="section level3">
+<h3><span class="header-section-number">8.2.1</span> Figure 8.1</h3>
+<p>First we run the Cox model with the exact discrete approximation and compute the martingale residuals.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stcox invest polar  numst format postelec caretakr, exactm nohr <span class="kw">mgale</span>(martingale) </code></pre></div>
+<p>We calculate the Cox-Snell residuals in the following way.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span>Use predict to derive Cox<span class="op">-</span>Snell residuals<span class="op">*</span>
+
+predict CoxSnell, csnell
+
+<span class="op">*</span>Re<span class="op">-</span>stset the data to treat the Cox<span class="op">-</span>Snell residuals as <span class="st">&quot;the data&quot;</span> (i.e. the time variable)<span class="op">*</span>
+
+stset CoxSnell, <span class="kw">fail</span>(censor)
+
+<span class="op">*</span>Generate the K<span class="op">-</span>M estimates <span class="cf">for</span> the new data<span class="op">*</span>
+
+sts generate km=s</code></pre></div>
+<p>Then we plot the the residuals on the x-axis and the integrated hazard oof the residuals on the y-axis, against a 45 degree line that serves as a reference line. If the model holds, the plot of the residuals agianst the integrated hazard should fall roughly on that line.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span>Generate the integrated <span class="kw">hazard</span> (using double option <span class="cf">for</span> increased computer precision)<span class="op">*</span>
+
+gen double H_cs=<span class="op">-</span><span class="kw">log</span>(km) 
+
+<span class="op">*</span>Reset working directory to output folder
+
+cd <span class="op">~</span><span class="er">/</span>Dropbox<span class="op">/</span>github<span class="op">/</span>liwu<span class="op">-</span>gan.github.io<span class="op">/</span>chapter8
+
+<span class="kw">twoway</span> (line H_cs CoxSnell, sort) (line CoxSnell CoxSnell, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Cox-Snell Residuals from Cabinet Data&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;H(t) based on Cox-Snell Residuals&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_coxsnellcab.gph, replace)
+    
+graph export ch8_coxsnellcab.png, replace</code></pre></div>
+<div class="figure">
+<img src="chapter8/ch8_coxsnellcab.png" />
+
+</div>
+</div>
+<div id="figure-8.2-1" class="section level3">
+<h3><span class="header-section-number">8.2.2</span> Figure 8.2</h3>
+<p>Before plotting the martingale residuals on the polarization index and formation attempts variables, we drop the variables from our previous analysis and re-stset the data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span>Drop previous data
+drop martingale CoxSnell H_cs km
+
+<span class="op">*</span>Resetting the data to original form<span class="op">*</span>
+
+stset durat, <span class="kw">fail</span>(censor)</code></pre></div>
+<p>We start with estimating the model for Approach 1.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Estimate model of interest
+
+stcox format polar, exactp nohr <span class="kw">mgale</span>(mg) </code></pre></div>
+<p>Then we can plot the martingales and lowess term against either the polarization or formation attempts covoriate (Approach 1).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">twoway</span> (scatter mg polar, sort <span class="kw">mfcolor</span>(white) <span class="kw">mlcolor</span>(black)) (lowess mg polar, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Polarization Index&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Martingale Residuals: Approach 1&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_polarff1.gph, replace)
+
+<span class="kw">twoway</span> (scatter mg format, sort <span class="kw">mfcolor</span>(white) <span class="kw">mlcolor</span>(black)) (lowess mg format, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Formation Attempts&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Martingale Residuals: Approach 1&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_formatff1.gph, replace)
+
+drop mg</code></pre></div>
+<p>Now we run two different models, one with only the formation attempts covariate and the other with only the polarization index covariate. From the first model, we plot the Martingale residuals and the smoothed residuals against the polarization variable while in the second, we plot the residuals against the formation attempts covariate.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>First estimate submodel
+
+stcox format, exactp nohr <span class="kw">mgale</span>(mg)
+
+<span class="op">*</span><span class="st"> </span>Plot of martingales vs. polarization variable with lowess term
+
+<span class="kw">twoway</span> (scatter mg polar, sort <span class="kw">mfcolor</span>(white) <span class="kw">mlcolor</span>(black)) (lowess mg polar, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Polarization Index&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Martingale Residuals: Approach 2&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_polarff2.gph, replace)
+
+drop mg
+
+<span class="op">*</span><span class="st"> </span>Now test <span class="cf">for</span> functional form of formation attempts
+
+stcox polar, exactp nohr <span class="kw">mgale</span>(mg)
+
+<span class="op">*</span><span class="st"> </span>Plot of martingales vs. formation attempts variable with lowess term  
+
+  <span class="kw">twoway</span> (scatter mg format, sort <span class="kw">mfcolor</span>(white) <span class="kw">mlcolor</span>(black)) (lowess mg format, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Formation Attempts&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Martingale Residuals: Approach 2&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_formatff2.gph, replace)
+
+drop mg</code></pre></div>
+<p>We combine all four graphs. In all four plots, we see mostly flat lines centered around 0, which indicates that no adjustments need to be made to the functional form</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">graph combine ch8_polarff1.gph ch8_formatff1.gph ch8_polarff2.gph <span class="op">/</span><span class="er">//</span>
+<span class="st"> </span>ch8_formatff2.gph, <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="op">/</span><span class="er">//</span>
+<span class="kw">icolor</span>(none)) <span class="kw">saving</span>(ch8_funcformcab.gph, replace)
+
+graph export ch8_funcformcab.png, replace</code></pre></div>
+<div class="figure">
+<img src="chapter8/ch8_funcformcab.png" />
+
+</div>
+</div>
+<div id="figure-8.6" class="section level3">
+<h3><span class="header-section-number">8.2.3</span> Figure 8.6</h3>
+<p>We want to plot the Cox-snell residuals on the x-axis and the integrated hazard function on the y-axis for a variety of parametric models. Let’s start with the exponential.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">streg invest polar  numst format postelec caretakr, <span class="kw">dist</span>(exp) time
+
+<span class="op">*</span>Now compute Cox<span class="op">-</span>Snell residuals<span class="op">*</span>
+
+predict double cs, csnell
+
+<span class="op">*</span>Now restset the data<span class="op">*</span>
+
+stset cs, <span class="kw">failure</span>(censor)
+
+<span class="op">*</span>Now generate K<span class="op">-</span>M estimates<span class="op">*</span>
+<span class="st">  </span>
+sts generate km=s
+
+<span class="op">*</span>Back out the estimated cumulative hazard<span class="op">:</span><span class="er">*</span>
+
+gen double H=<span class="op">-</span><span class="kw">log</span>(km)
+
+<span class="op">*</span>Graph functions<span class="op">*</span>
+
+<span class="kw">twoway</span> (line H cs, sort) (line cs cs, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Exponential Model&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;H(t) based on Cox-Snell Residuals&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_coxsnellexp.gph, replace)
+    
+drop H cs km 
+stset durat, <span class="kw">fail</span>(censor)</code></pre></div>
+<p>Let’s estimate the Weibull next and calculate the Cox-snell residuals and integrated hazard.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">streg invest polar  numst format postelec caretakr, <span class="kw">dist</span>(weibull) time
+
+<span class="op">*</span>Now compute Cox<span class="op">-</span>Snell residuals<span class="op">*</span>
+
+predict double cs, csnell
+
+<span class="op">*</span>Now restset the data<span class="op">*</span>
+<span class="st">  </span>
+stset cs, <span class="kw">failure</span>(censor)
+
+<span class="op">*</span>Now generate K<span class="op">-</span>M estimates<span class="op">*</span>
+
+sts generate km=s
+
+<span class="op">*</span>Back out the estimated cumulative hazard<span class="op">:</span><span class="er">*</span>
+
+gen double H=<span class="op">-</span><span class="kw">log</span>(km)
+
+<span class="op">*</span>Graph functions<span class="op">*</span>
+
+<span class="kw">twoway</span> (line H cs, sort) (line cs cs, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Weibull Model&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;H(t) based on Cox-Snell Residuals&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_coxsnellweib.gph, replace)
+
+drop H cs km    
+stset durat, <span class="kw">fail</span>(censor)</code></pre></div>
+<p>We do the same for the log-log model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">streg invest polar  numst format postelec caretakr, <span class="kw">dist</span>(loglog) 
+
+<span class="op">*</span>Now compute Cox<span class="op">-</span>Snell residuals<span class="op">*</span>
+
+predict double cs, csnell
+
+<span class="op">*</span>Now restset the data<span class="op">*</span>
+
+stset cs, <span class="kw">failure</span>(censor)
+
+<span class="op">*</span>Now generate K<span class="op">-</span>M estimates<span class="op">*</span>
+
+sts generate km=s
+
+<span class="op">*</span>Back out the estimated cumulative hazard<span class="op">:</span><span class="er">*</span>
+
+gen double H=<span class="op">-</span><span class="kw">log</span>(km)
+
+<span class="op">*</span>Graph functions<span class="op">*</span>
+
+<span class="kw">twoway</span> (line H cs, sort) (line cs cs, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Log-Logistic Model&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;H(t) based on Cox-Snell Residuals&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_coxsnellll.gph, replace)
+
+drop H cs km 
+stset durat, <span class="kw">fail</span>(censor)</code></pre></div>
+<p>The log-normal model is next.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">streg invest polar  numst format postelec caretakr, <span class="kw">dist</span>(lognorm) time
+
+<span class="op">*</span>Now compute Cox<span class="op">-</span>Snell residuals<span class="op">*</span>
+
+predict double cs, csnell
+
+<span class="op">*</span>Now restset the data<span class="op">*</span>
+
+stset cs, <span class="kw">failure</span>(censor)
+
+<span class="op">*</span>Now generate K<span class="op">-</span>M estimates<span class="op">*</span>
+
+sts generate km=s
+
+<span class="op">*</span>Back out the estimated cumulative hazard<span class="op">:</span><span class="er">*</span>
+
+gen double H=<span class="op">-</span><span class="kw">log</span>(km)
+
+<span class="op">*</span>Graph functions<span class="op">*</span>
+
+<span class="kw">twoway</span> (line H cs, sort) (line cs cs, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Log-Normal Model&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;H(t) based on Cox-Snell Residuals&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_coxsnellln.gph, replace)
+    
+drop H cs km 
+stset durat, <span class="kw">fail</span>(censor)</code></pre></div>
+<p>Here is the gompertz model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">streg invest polar  numst format postelec caretakr, <span class="kw">dist</span>(gompertz) nohr
+
+<span class="op">*</span>Now compute Cox<span class="op">-</span>Snell residuals<span class="op">*</span>
+
+predict double cs, csnell
+
+<span class="op">*</span>Now restset the data<span class="op">*</span>
+
+stset cs, <span class="kw">failure</span>(censor)
+
+<span class="op">*</span>Now generate K<span class="op">-</span>M estimates<span class="op">*</span>
+
+sts generate km=s
+
+<span class="op">*</span>Back out the estimated cumulative hazard<span class="op">:</span><span class="er">*</span>
+
+gen double H=<span class="op">-</span><span class="kw">log</span>(km)
+
+<span class="op">*</span>Graph functions<span class="op">*</span>
+
+<span class="kw">twoway</span> (line H cs, sort) (line cs cs, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Gompertz Model&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;H(t) based on Cox-Snell Residuals&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_coxsnellgomp.gph, replace)
+    
+drop H cs km 
+stset durat, <span class="kw">fail</span>(censor)</code></pre></div>
+<p>Lastly, here is the generalized gamma model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">streg invest polar  numst format postelec caretakr, <span class="kw">dist</span>(ggamma) time
+
+<span class="op">*</span>Now compute Cox<span class="op">-</span>Snell residuals<span class="op">*</span>
+
+predict double cs, csnell
+
+<span class="op">*</span>Now restset the data<span class="op">*</span>
+
+stset cs, <span class="kw">failure</span>(censor)
+
+<span class="op">*</span>Now generate K<span class="op">-</span>M estimates<span class="op">*</span>
+
+sts generate km=s
+
+<span class="op">*</span>Back out the estimated cumulative hazard<span class="op">:</span><span class="er">*</span>
+
+gen double H=<span class="op">-</span><span class="kw">log</span>(km)
+
+<span class="op">*</span>Graph functions<span class="op">*</span>
+
+<span class="kw">twoway</span> (line H cs, sort) (line cs cs, sort <span class="kw">lpattern</span>(solid)), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Generalized Gamma Model&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;H(t) based on Cox-Snell Residuals&quot;</span>, <span class="kw">position</span>(<span class="dv">11</span>)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_coxsnellgg.gph, replace)
+    
+drop H cs km </code></pre></div>
+<p>We can combine all six graphs.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">graph combine ch8_coxsnellexp.gph ch8_coxsnellweib.gph ch8_coxsnellll.gph <span class="op">/</span><span class="er">//</span>
+<span class="st"> </span>ch8_coxsnellln.gph ch8_coxsnellgomp.gph ch8_coxsnellgg.gph, <span class="kw">col</span>(<span class="dv">2</span>) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="op">/</span><span class="er">//</span>
+<span class="kw">icolor</span>(none)) <span class="kw">saving</span>(ch8_coxsnellparm.gph, replace)
+
+graph export ch8_coxsnellparm.png, replace</code></pre></div>
+<div class="figure">
+<img src="chapter8/ch8_coxsnellparm.png" />
+
+</div>
+</div>
+</div>
+<div id="militarized-interventions-data-in-r-1" class="section level2">
+<h2><span class="header-section-number">8.3</span> Militarized Interventions Data in R</h2>
+<p>Let’s load the dataset and prepare the survival object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#-------Dataset</span>
+
+imi &lt;-<span class="st"> </span><span class="kw">read.dta</span>(<span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/omifinal.dta&quot;</span>)
+
+<span class="co">#-------Data prepation</span>
+
+<span class="kw">names</span>(imi)[<span class="kw">names</span>(imi) <span class="op">==</span><span class="st"> &#39;break&#39;</span>] &lt;-<span class="st"> &#39;breakdown&#39;</span>
+
+<span class="co"># Create survival object for dv </span>
+
+<span class="co">#dv &lt;- Surv(imi$&#39;_t&#39;, imi$&#39;_d&#39;)</span>
+
+dv &lt;-<span class="st"> </span><span class="kw">Surv</span>(imi<span class="op">$</span><span class="st">&#39;_t0&#39;</span>, imi<span class="op">$</span><span class="st">&#39;_t&#39;</span>, imi<span class="op">$</span><span class="st">&#39;_d&#39;</span>)</code></pre></div>
+<div id="figure-8.3" class="section level3">
+<h3><span class="header-section-number">8.3.1</span> Figure 8.3</h3>
+<p>After running a Cox model (note that we are running the model with the Efron approximation because the exact discrete method used in Stata and in the book takes much longer to run), we want to assess whether any observations are exerting influence on the coefficient estimates. We can calculate the dfbeta residuals directly in R using the ggcoxdiagnostics command in the survminer package. The dfbeta residuals capture ``the estimated changes in the regression coefficients upon deleting each observation in turn.&quot;</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cox_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>pbal <span class="op">+</span><span class="st"> </span>ctg <span class="op">+</span><span class="st"> </span>ali <span class="op">+</span><span class="st"> </span>idem <span class="op">+</span><span class="st"> </span>tdem <span class="op">+</span><span class="st"> </span>breakdown, <span class="dt">data =</span> imi)
+
+
+
+<span class="kw">ggcoxdiagnostics</span>(cox_mod, <span class="dt">type =</span> <span class="st">&quot;dfbetas&quot;</span>, <span class="dt">linear.predictions =</span> <span class="ot">FALSE</span>, <span class="dt">ylab =</span> <span class="st">&quot;&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>()</code></pre></div>
+<p><img src="event_history_files/figure-html/unnamed-chunk-146-1.png" width="672" /></p>
+</div>
+<div id="figure-8.4" class="section level3">
+<h3><span class="header-section-number">8.3.2</span> Figure 8.4</h3>
+<p>To check the presence of outliers, we use the ggcoxdiagnostics command again to calculate the deviance residuals and plot them against the observation number. We also plotted the smoothed residuals using lowess for graphical purposes. What we want to see are the residuals distributed uniformly around 0. As the plot shows, there are some observations with very large negative residuals.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggcoxdiagnostics</span>(cox_mod, <span class="dt">type =</span> <span class="st">&quot;deviance&quot;</span>, <span class="dt">linear.predictions =</span> <span class="ot">FALSE</span>, <span class="dt">ylab =</span> <span class="st">&quot;&quot;</span>, <span class="dt">xlab =</span> <span class="st">&quot;Observation Number&quot;</span>, <span class="dt">title =</span> <span class="st">&quot;Deviance Residuals&quot;</span>)</code></pre></div>
+<p><img src="event_history_files/figure-html/unnamed-chunk-147-1.png" width="672" /></p>
+</div>
+</div>
+<div id="militarized-interventions-data-in-stata-1" class="section level2">
+<h2><span class="header-section-number">8.4</span> Militarized Interventions Data in Stata</h2>
+<div id="figure-8.3-1" class="section level3">
+<h3><span class="header-section-number">8.4.1</span> Figure 8.3</h3>
+<p>After running a Cox model, we want to assess whether any observations are exerting influence on the coefficient estimates. To do this, we create a matrix of score residuals and multiply it by the variance-covariance matrix generated from the Cox model. What we get is standard deviation changes to the estimates (called the dfbeta).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Estimate a Cox model
+
+stcox pbal idem tdem ctg ali <span class="cf">break</span>, nohr exactp <span class="kw">esr</span>(esr<span class="op">*</span>)
+
+<span class="op">*</span><span class="st"> </span>The <span class="kw">esr</span>(esr<span class="op">*</span>) command tells Stata to compute three variables storing the values of the efficient score <span class="kw">residuals</span> (esr1 and esr2 and esr3)
+
+<span class="op">*</span><span class="st"> </span>Next use Stata<span class="st">&#39;s matrix commands to generate an n x m matrix of score residuals</span>
+
+<span class="st">set matsize 800</span>
+
+<span class="st">mkmat esr1 esr2 esr3 esr4 esr5 esr6, matrix(score_residuals), if(e(sample))</span>
+
+<span class="st">* Now compute the var-cov matrix of beta</span>
+
+<span class="st">mat var_cov=e(V)</span>
+
+<span class="st">* and multiply the score residual matrix by the var-cov matrix to obtain the n x m matrix of scaled changes in the m coefficients</span>
+
+<span class="st">mat dfbeta=score_residuals*var_cov</span>
+
+<span class="st">* Now, we can name the columns, which will correspond to the influence values for the ith observation on the mth covariate</span>
+
+<span class="st">svmat dfbeta, names(x)</span>
+
+<span class="st">* For graphing purposes, we create a variable storing the observation number</span>
+
+<span class="st">gen obs=_n</span>
+
+<span class="st">* Also for display purposes, create a constant equal to 0</span>
+
+<span class="st">gen zero=0</span></code></pre></div>
+<p>For each covariate, we plot the dfbetas by the observation number to check for influential observations. Deviations from 0 suggest influential observations. From the plots, none appear large in magnitude.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Reset working directory to collect following output 
+
+cd <span class="op">~</span><span class="er">/</span>Dropbox<span class="op">/</span>github<span class="op">/</span>liwu<span class="op">-</span>gan.github.io<span class="op">/</span>chapter8
+
+<span class="op">*</span><span class="st"> </span>Now we can graph them; <span class="cf">for</span> the power balance covariate, the graph command is
+
+<span class="kw">twoway</span> (line x1 obs, sort) (line zero obs, sort), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Observation Number&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Power Balance&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_influencepb.gph, replace)
+    
+    
+<span class="op">*</span><span class="st"> </span>And <span class="cf">for</span> the intervenor democracy score
+
+<span class="kw">twoway</span> (line x2 obs, sort) (line zero obs, sort), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Observation Number&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Intervenor Democracy&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_influenceid.gph, replace)
+    
+    
+<span class="op">*</span><span class="st"> </span>And <span class="cf">for</span> the target democracy score
+
+
+<span class="kw">twoway</span> (line x3 obs, sort) (line zero obs, sort), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Observation Number&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Target Democracy&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_influencetd.gph, replace)
+    
+<span class="op">*</span><span class="st"> </span>And <span class="cf">for</span> the contiguity status covariate
+
+<span class="kw">twoway</span> (line x4 obs, sort) (line zero obs, sort), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Observation Number&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Territorial Contiguity&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_influencec.gph, replace)
+    
+<span class="op">*</span><span class="st"> </span>And <span class="cf">for</span> the alliance status covariate
+
+<span class="kw">twoway</span> (line x5 obs, sort) (line zero obs, sort), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Observation Number&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Alliance&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_influencea.gph, replace)
+    
+<span class="op">*</span><span class="st"> </span>And <span class="cf">for</span> the government breakdown covariate
+
+<span class="kw">twoway</span> (line x6 obs, sort) (line zero obs, sort), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Observation Number&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Authority Breakdown&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_influenceb.gph, replace)
+
+
+<span class="op">*</span><span class="st"> </span>Now we can combine all six graphs 
+
+graph combine ch8_influencepb.gph ch8_influenceid.gph ch8_influencetd.gph <span class="op">/</span><span class="er">//</span>
+<span class="st"> </span>ch8_influencec.gph ch8_influencea.gph ch8_influenceb.gph, <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="op">/</span><span class="er">//</span>
+<span class="kw">icolor</span>(none)) <span class="kw">saving</span>(ch8_influence.gph, replace)
+
+<span class="op">*</span><span class="st"> </span>Export graph to .png file
+
+graph export ch8_influence.png, replace</code></pre></div>
+<div class="figure">
+<img src="chapter8/ch8_influence.png" />
+
+</div>
+</div>
+<div id="figure-8.4-1" class="section level3">
+<h3><span class="header-section-number">8.4.2</span> Figure 8.4</h3>
+<p>We want to check the presence of outliers. The deviance residuals were calculated from a Cox model, and we plot the deviance residuals against the observation number. We also plotted the smoothed residuals using lowess for graphical purposes. What we want to see are the residuals distributed uniformly around 0. As the plot shows, there are some observations with very large negative residuals.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Estimate Cox model and output martingale residuals
+
+stcox  ctg idem tdem pbal <span class="cf">break</span> ali, nohr exactp <span class="kw">mgale</span>(mg)
+
+<span class="op">*</span><span class="st"> </span>Now, create deviance residuals using predict option
+
+predict double deviance, deviance
+
+<span class="op">*</span><span class="st"> </span>Ise ksm to graph <span class="kw">deviance</span> (using lowess)
+
+<span class="kw">twoway</span> (scatter deviance obs, sort) (lowess deviance obs, sort) (line zero obs, sort), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Observation Number&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Deviance Residuals&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_outliersomi.gph, replace)
+    
+<span class="op">*</span><span class="st"> </span>Export graph to .png file
+
+graph export ch8_outliersomi.png, replace</code></pre></div>
+<div class="figure">
+<img src="chapter8/ch8_outliersomi.png" />
+
+</div>
+</div>
+<div id="figure-8.5" class="section level3">
+<h3><span class="header-section-number">8.4.3</span> Figure 8.5</h3>
+<p>Here, the deviance residuals are plotted against duration times. We also include the smoothed residuals using lowess again. We can see that interventions which last for a long time tend to have large negative residuals. This suggests that for longer interventions, the probability of an intervention terminating is overestimated by the Cox model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">twoway</span> (scatter deviance durmths, sort) (lowess deviance durmths, sort) (line zero durmths, sort), <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">legend</span>(off) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">xtitle</span>(<span class="st">&quot;Duration of Militarized Intervention&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(<span class="st">&quot;Deviance Residuals&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">saving</span>(ch8_outliersomi2.gph, replace)
+
+    
+<span class="op">*</span>Export graph to .png file
+
+graph export ch8_outliersomi2.png, replace</code></pre></div>
+<div class="figure">
+<img src="chapter8/ch8_outliersomi2.png" />
+
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="inclusion-of-time-varying-covariates.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="some-modeling-strategies-for-unobserved-heterogeneity.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+},
+"search": false
+});
+});
+</script>
+
+</body>
+
+</html>

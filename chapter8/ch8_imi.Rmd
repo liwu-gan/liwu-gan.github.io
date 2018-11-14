@@ -1,0 +1,70 @@
+---
+title: 'Chapter 8: International Militarized Intervention Dataset in R'
+output: html_document
+---
+
+```{r, include = FALSE}
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+```
+
+```{r, include = FALSE}
+
+#---- Packages 
+library(foreign)
+library(survival)
+library(survminer)
+library(flexsurv)
+library(texreg)
+library(ggplot2)
+library(SurvRegCensCov)
+library(haven)
+library(tidyr)
+
+```
+
+Let's load the dataset and prepare the survival object.
+```{r}
+
+#-------Dataset
+
+imi <- read.dta("~/Dropbox/github/liwu-gan.github.io/dta/omifinal.dta")
+
+#-------Data prepation
+
+names(imi)[names(imi) == 'break'] <- 'breakdown'
+
+# Create survival object for dv 
+
+#dv <- Surv(imi$'_t', imi$'_d')
+
+dv <- Surv(imi$'_t0', imi$'_t', imi$'_d')
+
+
+```
+
+
+### Figure 8.3
+
+After running a Cox model (note that we are running the model with the Efron approximation because the exact discrete method used in Stata and in the book takes much longer to run), we want to assess whether any observations are exerting influence on the coefficient estimates. We can calculate the dfbeta residuals directly in R using the ggcoxdiagnostics command in the survminer package. The dfbeta residuals capture ``the estimated changes in the regression coefficients upon deleting each observation in turn."
+
+```{r}
+
+cox_mod <- coxph(dv ~ pbal + ctg + ali + idem + tdem + breakdown, data = imi)
+
+
+
+ggcoxdiagnostics(cox_mod, type = "dfbetas", linear.predictions = FALSE, ylab = "") + geom_line()
+
+```
+
+### Figure 8.4
+
+To check the presence of outliers, we use the ggcoxdiagnostics command again to calculate the deviance residuals and plot them against the observation number. We also plotted the smoothed residuals using lowess for graphical purposes. What we want to see are the residuals distributed uniformly around 0. As the plot shows, there are some observations with very large negative residuals. 
+
+```{r}
+
+ggcoxdiagnostics(cox_mod, type = "deviance", linear.predictions = FALSE, ylab = "", xlab = "Observation Number", title = "Deviance Residuals")
+
+```
+

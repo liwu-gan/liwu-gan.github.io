@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="preface.html">
-<link rel="next" href="the-logic-of-event-history-analysis.html">
+<link rel="prev" href="models-for-discrete-data.html">
+<link rel="next" href="inclusion-of-time-varying-covariates.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -200,16 +200,287 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="event-history-and-social-science" class="section level1">
-<h1><span class="header-section-number">1</span> Event History and Social Science</h1>
+<div id="issues-in-model-selection" class="section level1">
+<h1><span class="header-section-number">6</span> Issues in Model Selection</h1>
+<p>This chapter makes use of data on the duration until state adoption of restrictive abortion legislation since the 1973 Roe vs. Wade Supreme Court decision (from Brace et al. 1999).</p>
+<div id="restrictive-abortion-legislation-data-in-r" class="section level2">
+<h2><span class="header-section-number">6.1</span> Restrictive Abortion Legislation Data in R</h2>
+<p>Let’s load the dataset.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#-------Dataset</span>
+
+adopt &lt;-<span class="st"> </span><span class="kw">read.dta</span>(<span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/adopt_singleevent.dta&quot;</span>)
+
+<span class="co">#-------Data prepation</span>
+
+<span class="co"># Create survival object for dv </span>
+
+dv &lt;-<span class="st"> </span><span class="kw">Surv</span>(adopt<span class="op">$</span><span class="st">&#39;_t&#39;</span>, adopt<span class="op">$</span><span class="st">&#39;_d&#39;</span>)</code></pre></div>
+<div id="table-6.1" class="section level3">
+<h3><span class="header-section-number">6.1.1</span> Table 6.1</h3>
+<p>First, we run each of the models.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The conditional logit model is the same as the exact discrete method we used earlier</span>
+
+ed_mod &lt;-<span class="st"> </span><span class="kw">coxph</span>(dv <span class="op">~</span><span class="st"> </span>mooneymean, <span class="dt">data =</span> adopt, <span class="dt">ties =</span> <span class="st">&quot;exact&quot;</span>)
+
+### Can&#39;t run Royston-Parmar model 
+
+
+<span class="co"># Weibull P/H/</span>
+weib_mod &lt;-<span class="st"> </span><span class="kw">survreg</span>(dv <span class="op">~</span><span class="st"> </span>mooneymean, <span class="dt">data =</span> adopt, <span class="dt">dist =</span> <span class="st">&quot;weibull&quot;</span>)</code></pre></div>
+<p>Again, we have to convert the Weibull A.F.T. to a P.H. parameterization.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Conversion from Weibull A.F.T.  to P.H. </span>
+
+intercept &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">50</span>)
+
+adopt<span class="op">$</span>intercept &lt;-<span class="st"> </span>intercept
+
+weib_mod1 &lt;-<span class="st"> </span><span class="kw">survreg</span>(dv <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>mooneymean <span class="op">+</span><span class="st"> </span>intercept, <span class="dt">data =</span> adopt)
+
+weib_mod2 &lt;-<span class="st"> </span><span class="kw">survreg</span>(dv <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>intercept <span class="op">+</span><span class="st"> </span>mooneymean, <span class="dt">data =</span> adopt)
+
+weib_mod1_ph &lt;-<span class="st"> </span><span class="kw">ConvertWeibull</span>(weib_mod1)
+
+weib_mod2_ph &lt;-<span class="st"> </span><span class="kw">ConvertWeibull</span>(weib_mod2)
+
+weib_ph &lt;-<span class="st"> </span><span class="kw">rbind</span>(weib_mod1_ph<span class="op">$</span>vars, weib_mod2_ph<span class="op">$</span>vars)
+
+<span class="co"># Delete rows that are redundant/unnecessary </span>
+weib_ph &lt;-<span class="st"> </span>weib_ph[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span>),]
+
+
+weib_ph &lt;-<span class="st"> </span>weib_ph[<span class="kw">c</span>(<span class="st">&quot;mooneymean&quot;</span>, <span class="st">&quot;gamma&quot;</span>, <span class="st">&quot;intercept&quot;</span>),]
+
+weib_ph</code></pre></div>
+<pre><code>##              Estimate         SE
+## mooneymean -0.2227881 0.08239561
+## gamma       0.9830112 0.12000313
+## intercept  -2.0966280 0.31945773</code></pre>
+<p>Let’s format these models into a presentable table.</p>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">
+Models of Adoption of Restrictive Abortion Legislation
+</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b></b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Cox Model</b>
+</th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;">
+<b>Weibull Model</b>
+</th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Pre-Roe
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.22 (0.09)
+</td>
+<td style="padding-right: 12px; border: none;">
+-0.22 (0.08)
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+Constant
+</td>
+<td style="padding-right: 12px; border: none;">
+</td>
+<td style="padding-right: 12px; border: none;">
+-2.10 (0.32)
+</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">
+Log Likelihood
+</td>
+<td style="border-top: 1px solid black;">
+-96.60
+</td>
+<td style="border-top: 1px solid black;">
+-133.07
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">
+N
+</td>
+<td style="padding-right: 12px; border: none;">
+50
+</td>
+<td style="padding-right: 12px; border: none;">
+50
+</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">
+Shape Parameter
+</td>
+<td style="border-bottom: 2px solid black;">
+</td>
+<td style="border-bottom: 2px solid black;">
+0.98
+</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="4">
+<span style="font-size:0.8em"></span>
+</td>
+</tr>
+</table>
+</div>
+<div id="figure-6.1" class="section level3">
+<h3><span class="header-section-number">6.1.2</span> Figure 6.1</h3>
+<p>We first calculate the baseline hazard for the Weibull.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Let&#39;s create lambda from the Weibull model we ran earlier</span>
+  
+lambda_base &lt;-<span class="st"> </span><span class="kw">unname</span>(<span class="kw">exp</span>(<span class="op">-</span>(weib_mod<span class="op">$</span>coef[<span class="dv">1</span>])))
+
+p &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">/</span>weib_mod<span class="op">$</span>scale
+
+t &lt;-<span class="st"> </span>adopt<span class="op">$</span><span class="st">&#39;_t&#39;</span>
+
+<span class="co"># We cangenerate the baseline hazard function, knowing that </span>
+<span class="co"># h(t) = lambda * p * (lambda * t)^(p-1)</span>
+
+haz_baseweib &lt;-<span class="st"> </span>lambda_base <span class="op">*</span><span class="st"> </span>p <span class="op">*</span><span class="st"> </span>(lambda_base <span class="op">*</span><span class="st"> </span>t)<span class="op">^</span>(p<span class="op">-</span><span class="dv">1</span>)
+
+weib &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">cbind</span>(t, haz_baseweib))</code></pre></div>
+<p>We do the same for the Cox model we already ran earlier.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Calculates integrated baseline hazard, H(t)</span>
+
+haz_rte &lt;-<span class="st"> </span><span class="kw">basehaz</span>(ed_mod, <span class="dt">centered =</span> <span class="ot">FALSE</span>)
+
+<span class="co"># To get the baseline hazard, we calculate H(t) - H(t-1), which gives us the corresponding # value for all obs. except for the first. </span>
+
+haz_cox &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">diff</span>(haz_rte<span class="op">$</span>hazard))
+
+<span class="co"># Take out H(t) at t = 1 and merge with previous calculations</span>
+
+row &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="fl">0.2208064</span>)
+<span class="kw">colnames</span>(row) &lt;-<span class="st"> &quot;diff.haz_rte.hazard.&quot;</span>
+haz_cox &lt;-<span class="st"> </span><span class="kw">rbind</span>(row, haz_cox)
+<span class="kw">colnames</span>(haz_cox) &lt;-<span class="st"> &quot;baseline_hazard&quot;</span>
+
+<span class="co"># Merge baseline hazards into master dataframe with integrated hazards</span>
+
+haz_rte<span class="op">$</span>haz_cox &lt;-<span class="st"> </span>haz_cox
+
+<span class="co">#Drop last row for graphical purposes</span>
+
+haz_rte &lt;-<span class="st"> </span>haz_rte[<span class="op">-</span><span class="kw">c</span>(<span class="dv">16</span>), ]
+
+### Calculate baseline hazard rate for Royston-Parmar model</code></pre></div>
+<p>We are ready to plot now.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="dt">data =</span> haz_rte, <span class="kw">aes</span>(<span class="dt">x =</span> time, <span class="dt">y =</span> haz_cox, <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_step</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> weib, <span class="kw">aes</span>(<span class="dt">x =</span> t, <span class="dt">y =</span> haz_baseweib, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>)) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;Hazard Functions&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Years Since Roe vs. Wade&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">colour =</span> <span class="st">&quot;Model&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Cox&quot;</span>, <span class="st">&quot;Weibull&quot;</span>), <span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;black&quot;</span>))</code></pre></div>
+<p><img src="event_history_files/figure-html/unnamed-chunk-101-1.png" width="672" /></p>
+</div>
+</div>
+<div id="restrictive-abortion-legislation-data-in-stata" class="section level2">
+<h2><span class="header-section-number">6.2</span> Restrictive Abortion Legislation Data in Stata</h2>
+<p>Let’s load the dataset.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">/</span><span class="er">*</span><span class="st"> </span>Dataset is adopt_singleevent.dta <span class="op">*</span><span class="er">/</span>
+
+use <span class="st">&quot;~/Dropbox/github/liwu-gan.github.io/dta/adopt_singleevent.dta&quot;</span></code></pre></div>
+<div id="table-6.1-1" class="section level3">
+<h3><span class="header-section-number">6.2.1</span> Table 6.1</h3>
+<p>We begin by estimating the Cox and Weibull models, and storing the results to make a table.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Cox model 
+
+eststo clear 
+
+eststo<span class="op">:</span><span class="st"> </span>stcox mooneymean, exactp nohr <span class="kw">basehc</span>(haz_cox)
+
+<span class="op">*</span><span class="st"> </span>Weibull model
+
+eststo<span class="op">:</span><span class="st"> </span>streg mooneymean, <span class="kw">dist</span>(weib) nohr
+
+<span class="op">*</span><span class="st"> </span>Reset working directory to collect output
+
+cd <span class="op">~</span><span class="er">/</span>Dropbox<span class="op">/</span>github<span class="op">/</span>liwu<span class="op">-</span>gan.github.io<span class="op">/</span>chapter6
+
+<span class="op">*</span><span class="st"> </span>Generate regression table output <span class="cf">for</span> Cox and Weibull 
+
+esttab using ch6_cox_weib.html, replace <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">coeflabel</span>(mooneymean <span class="st">&quot;Pre-Roe&quot;</span> _cons <span class="st">&quot;Constant&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(Models of Adoption of Restrictive Abortion Legislation) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">mtitles</span>(<span class="st">&quot;Cox Model&quot;</span> <span class="st">&quot;Weibull Model&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">eqlabels</span>(<span class="st">&quot;&quot;</span>, none) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">b</span>(<span class="dv">2</span>) <span class="kw">se</span>(<span class="dv">2</span>) nostar <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">stats</span>(ll N, <span class="kw">label</span>(<span class="st">&quot;Log-Likelihood&quot;</span> <span class="st">&quot;&lt;em&gt;N&lt;/em&gt;&quot;</span>) <span class="kw">fmt</span>(<span class="dv">2</span> <span class="dv">0</span>)) </code></pre></div>
+<div class="figure">
+<img src="chapter6/ch6_cox_weib.png" />
+
+</div>
+<p>Let’s estimate the Royston-Parmar model in comparison, and display the results in a table.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">eststo clear 
+
+eststo<span class="op">:</span>stpm mooneymean, <span class="kw">scale</span>(h) <span class="kw">df</span>(<span class="dv">3</span>)
+
+<span class="op">*</span><span class="st"> </span>Generate regression table output <span class="cf">for</span> Royston<span class="op">-</span>Parmar model
+
+esttab using ch6_rp.html, replace <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">coeflabel</span>(s0<span class="op">:</span>_cons <span class="st">&quot;Spline 1&quot;</span> s1<span class="op">:</span>_cons <span class="st">&quot;Spline 2&quot;</span> s2<span class="op">:</span>_cons <span class="st">&quot;Spline 3&quot;</span> xb<span class="op">:</span>mooneymean <span class="st">&quot;Pre-Roe&quot;</span> <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span>xb<span class="op">:</span>_cons <span class="st">&quot;Constant&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">title</span>(Models of Adoption of Restrictive Abortion Legislation) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">mtitles</span>(<span class="st">&quot;Royston-Parmar Model&quot;</span>) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">eqlabels</span>(<span class="st">&quot;&quot;</span>, none) <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">b</span>(<span class="dv">2</span>) <span class="kw">se</span>(<span class="dv">2</span>) nostar <span class="op">/</span><span class="er">//</span>
+<span class="st">    </span><span class="kw">stats</span>(ll N, <span class="kw">label</span>(<span class="st">&quot;Log-Likelihood&quot;</span> <span class="st">&quot;&lt;em&gt;N&lt;/em&gt;&quot;</span>) <span class="kw">fmt</span>(<span class="dv">2</span> <span class="dv">0</span>)) </code></pre></div>
+<div class="figure">
+<img src="chapter6/ch6_rp.png" />
+
+</div>
+</div>
+<div id="figure-6.1-1" class="section level3">
+<h3><span class="header-section-number">6.2.2</span> Figure 6.1</h3>
+<p>We already computed the baseline hazard for the Cox model earlier in the regression equation, so now we compute the baseline hazards for the Royston-Parmar and Weibull models.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="op">*</span><span class="st"> </span>Compute baseline hazard <span class="cf">for</span> Royston<span class="op">-</span>Parmar model 
+
+predict haz_rp, haz zero
+
+<span class="op">*</span><span class="st"> </span>Compute baseline hazard <span class="cf">for</span> Weibull based on P.H. parameterization.
+
+streg mooneymean, <span class="kw">dist</span>(weib) time
+
+<span class="op">*</span><span class="st"> </span>First, note that lambda=<span class="kw">exp</span>(<span class="op">-</span>beta<span class="st">&#39;x).  We can compute lambda for each confict type.</span>
+
+<span class="st">gen lambda_base=exp(-(_b[_cons])) if e(sample)</span>
+
+<span class="st">* Second, note that h(t)=lambda*p*(lambda*t)^(p-1).  We can generate the hazard rate for the baseline.</span>
+
+<span class="st">gen haz_weib=lambda_base*e(aux_p)*(lambda_base*yrtoadp)^(e(aux_p)-1)</span>
+
+<span class="st">twoway (line haz_rp yrtoadp, sort lpattern(solid)) (line haz_weib yrtoadp, sort lpattern(solid)) ///</span>
+<span class="st">    (line haz_cox yrtoadp, sort connect(stairstep) lpattern(solid)), ///</span>
+<span class="st">    legend(off) ///</span>
+<span class="st">    xtitle(&quot;Years Since Roe vs. Wade&quot;) ///</span>
+<span class="st">    title(&quot;Hazard Functions&quot;, position(11)) ///</span>
+<span class="st">    scheme(s2mono) graphregion(color(white) icolor(none)) ///</span>
+<span class="st">    saving(hazadopt.gph, replace)</span>
+
+<span class="st">graph export ch6_hazadopt.png, replace</span></code></pre></div>
+<p><img src="chapter6/ch6_hazadopt.png" />{</p>
+</div>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="preface.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="the-logic-of-event-history-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="models-for-discrete-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="inclusion-of-time-varying-covariates.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

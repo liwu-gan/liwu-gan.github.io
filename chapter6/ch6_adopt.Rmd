@@ -1,0 +1,235 @@
+---
+title: 'Chapter 6: Restrictive Abortion Legislation Data in R'
+output: html_document
+---
+
+```{r, include = FALSE}
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+```
+
+```{r, include = FALSE}
+
+#---- Packages 
+library(foreign)
+library(survival)
+library(survminer)
+library(flexsurv)
+library(texreg)
+library(ggplot2)
+library(SurvRegCensCov)
+
+```
+
+Let's load the dataset.
+
+```{r}
+
+#-------Dataset
+
+adopt <- read.dta("~/Dropbox/github/liwu-gan.github.io/dta/adopt_singleevent.dta")
+
+#-------Data prepation
+
+# Create survival object for dv 
+
+dv <- Surv(adopt$'_t', adopt$'_d')
+
+```
+
+
+### Table 6.1
+First, we run each of the models. 
+
+```{r}
+# The conditional logit model is the same as the exact discrete method we used earlier
+
+ed_mod <- coxph(dv ~ mooneymean, data = adopt, ties = "exact")
+
+### Can't run Royston-Parmar model 
+
+
+# Weibull P/H/
+weib_mod <- survreg(dv ~ mooneymean, data = adopt, dist = "weibull")
+```
+
+Again, we have to convert the Weibull A.F.T. to a P.H. parameterization.
+```{r}
+# Conversion from Weibull A.F.T.  to P.H. 
+
+intercept <- rep(1, 50)
+
+adopt$intercept <- intercept
+
+weib_mod1 <- survreg(dv ~ 0 + mooneymean + intercept, data = adopt)
+
+weib_mod2 <- survreg(dv ~ 0 + intercept + mooneymean, data = adopt)
+
+weib_mod1_ph <- ConvertWeibull(weib_mod1)
+
+weib_mod2_ph <- ConvertWeibull(weib_mod2)
+
+weib_ph <- rbind(weib_mod1_ph$vars, weib_mod2_ph$vars)
+
+# Delete rows that are redundant/unnecessary 
+weib_ph <- weib_ph[-c(1,2,4),]
+
+
+weib_ph <- weib_ph[c("mooneymean", "gamma", "intercept"),]
+
+weib_ph
+
+
+```
+
+
+Let's format these models into a presentable table.
+
+```{r, include = FALSE}
+# Create texreg object for Conditional Logit 
+
+tex_reg_converter <- function(original_model){
+  
+  
+  coefficient.names <- c("Pre-Roe")
+  coefficients <- original_model$coef 
+  se <- sqrt(diag(vcov(original_model)))
+  n <- original_model$n
+  lik <- logLik(original_model)
+  gof <- c(lik, n)
+  gof.names <- c("Log Likelihood", "N" )
+  decimal.places <- c(TRUE, FALSE)
+  
+  createTexreg(
+    coef.names = coefficient.names, coef = coefficients, se = se,
+    gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+  
+}
+
+ed_mod_final <- tex_reg_converter(ed_mod)
+```
+```{r, include = FALSE}
+# Create texreg object for Weibull Prop. Hazards model 
+
+coefficient.names <- c("Constant","Pre-Roe")
+coefficients <- c(-2.10, -.22)
+se <- c(.32, .08)
+shape <- .98
+n <- 50
+lik <- logLik(weib_mod)
+gof <- c(shape, lik, n)
+gof.names <- c("Shape Parameter", "Log Likelihood", "N" )
+decimal.places <- c(TRUE, TRUE, FALSE)
+
+weib_mod_ph <- createTexreg(
+  coef.names = coefficient.names, coef = coefficients, se = se,
+  gof.names = gof.names, gof = gof, gof.decimal = decimal.places)
+
+# Put Cox and Weibull tables together
+
+htmlreg(list(ed_mod_final, weib_mod_ph), stars = c(), caption = "Models of Adoption of Restrictive Abortion Legislation", caption.above = TRUE, custom.model.names = c("Cox Model", "Weibull Model"), center = FALSE, single.row = TRUE)
+```
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<table cellspacing="0" style="border: none;">
+<caption align="top" style="margin-bottom:0.3em;">Models of Adoption of Restrictive Abortion Legislation</caption>
+<tr>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b></b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b>Cox Model</b></th>
+<th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"><b>Weibull Model</b></th>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Pre-Roe</td>
+<td style="padding-right: 12px; border: none;">-0.22 (0.09)</td>
+<td style="padding-right: 12px; border: none;">-0.22 (0.08)</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">Constant</td>
+<td style="padding-right: 12px; border: none;"></td>
+<td style="padding-right: 12px; border: none;">-2.10 (0.32)</td>
+</tr>
+<tr>
+<td style="border-top: 1px solid black;">Log Likelihood</td>
+<td style="border-top: 1px solid black;">-96.60</td>
+<td style="border-top: 1px solid black;">-133.07</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;">N</td>
+<td style="padding-right: 12px; border: none;">50</td>
+<td style="padding-right: 12px; border: none;">50</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid black;">Shape Parameter</td>
+<td style="border-bottom: 2px solid black;"></td>
+<td style="border-bottom: 2px solid black;">0.98</td>
+</tr>
+<tr>
+<td style="padding-right: 12px; border: none;" colspan="4"><span style="font-size:0.8em"></span></td>
+</tr>
+</table>
+
+### Figure 6.1 
+
+We first calculate the baseline hazard for the Weibull. 
+```{r}
+# Let's create lambda from the Weibull model we ran earlier
+  
+lambda_base <- unname(exp(-(weib_mod$coef[1])))
+
+p <- 1/weib_mod$scale
+
+t <- adopt$'_t'
+
+# We cangenerate the baseline hazard function, knowing that 
+# h(t) = lambda * p * (lambda * t)^(p-1)
+
+haz_baseweib <- lambda_base * p * (lambda_base * t)^(p-1)
+
+weib <- data.frame(cbind(t, haz_baseweib))
+
+```
+
+We do the same for the Cox model we already ran earlier. 
+```{r}
+# Calculates integrated baseline hazard, H(t)
+
+haz_rte <- basehaz(ed_mod, centered = FALSE)
+
+# To get the baseline hazard, we calculate H(t) - H(t-1), which gives us the corresponding # value for all obs. except for the first. 
+
+haz_cox <- data.frame(diff(haz_rte$hazard))
+
+# Take out H(t) at t = 1 and merge with previous calculations
+
+row <- data.frame(0.2208064)
+colnames(row) <- "diff.haz_rte.hazard."
+haz_cox <- rbind(row, haz_cox)
+colnames(haz_cox) <- "baseline_hazard"
+
+# Merge baseline hazards into master dataframe with integrated hazards
+
+haz_rte$haz_cox <- haz_cox
+
+#Drop last row for graphical purposes
+
+haz_rte <- haz_rte[-c(16), ]
+
+### Calculate baseline hazard rate for Royston-Parmar model
+
+```
+
+We are ready to plot now. 
+
+```{r, message = FALSE}
+
+ggplot(data = haz_rte, aes(x = time, y = haz_cox, color = "black")) + geom_step() +
+  geom_line(data = weib, aes(x = t, y = haz_baseweib, color = "red")) + 
+  theme_bw() +
+  ggtitle("Hazard Functions") +
+  xlab("Years Since Roe vs. Wade") +
+  ylab("") +
+  labs(colour = "Model") +
+  scale_color_manual(labels = c("Cox", "Weibull"), values = c("red", "black"))
+
+```
+
+

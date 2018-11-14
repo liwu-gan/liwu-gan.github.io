@@ -3,11 +3,6 @@ title: "Chapter 3: UN Peacekeeping Data in Stata"
 output: html_document
 ---
 
-```{r, include = FALSE}
-rm(list = ls())
-options(stringsAsFactors = FALSE)
-```
-
 ```{r, eval = FALSE, echo = FALSE}
 
 clear
@@ -52,7 +47,7 @@ Now we can generate the regression table for the three models.
 
 * Reset working directory to collect following output 
 
-cd ~/Dropbox/event_history/rmd
+cd ~/Dropbox/github/liwu-gan.github.io/chapter3
 
 * Generate regression table output 
 
@@ -103,12 +98,11 @@ twoway (line haz_civil duration, sort lpattern(solid) lcolor(red)) (line haz_icw
 	xtitle("Duration of U.N. Peacekeeping Missions") ///
 	title("Hazard Rates", position (11)) ///
 	scheme(s2mono) graphregion(color(white) icolor(none)) ///
-	saving(cabcoxinthaz.gph, replace)
+	saving(ch3_UNweibhaz.gph, replace)
 
-* Export graph as .png file.
+graph export ch3_UNweibhaz.png, replace
 
-graph export UNweibhaz.png, replace
 
 ```
 
-![](~/Dropbox/github/liwu-gan.github.io/chapter3/UNweibhaz.png){}
+![](~/Dropbox/github/liwu-gan.github.io/chapter3/ch3_UNweibhaz.png){}

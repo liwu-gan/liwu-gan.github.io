@@ -1,0 +1,17 @@
+---
+title: "Conflict Data in Stata"
+output: html_document
+---
+```{r, eval = FALSE, echo = FALSE}
+
+clear
+set more off
+
+/* Dataset is conflict.dta */
+
+use "~/Dropbox/github/liwu-gan.github.io/dta/conflict.dta"
+
+
+```
+
+### Table 9.1

@@ -1,0 +1,95 @@
+---
+title: 'Chapter 5: International Militarized Interventions Data in Stata'
+output: html_document
+---
+```{r, include = FALSE}
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+```
+
+```{r, eval = FALSE, echo = FALSE}
+
+clear
+set more off
+
+```
+
+Let's load the dataset.
+```{r, eval = FALSE}
+
+/* Dataset is omifinal.dta */
+
+use "~/Dropbox/github/liwu-gan.github.io/dta/omifinal2.dta"
+
+```
+
+### Table 5.3
+
+Before we estimate the models, we want to mean center the intervenor democracy, target democracy, and relative capabilities covariates after removing the missing observations from a logit model. 
+
+```{r, eval = FALSE}
+/* First mean center quantitative variables */
+
+* To get sample estimates, create esample variable
+
+logit fail ctg  ali idem tdem pbal break
+
+gen insample=1 if e(sample)
+
+egen meanidem=mean(idem)  if insample==1
+egen meantdem=mean(tdem) if insample==1
+egen meanpbal=mean(pbal) if insample==1
+
+gen idemmean=idem-meanidem
+gen tdemmean=tdem-meantdem
+gen pbalmean=pbal-meanpbal
+
+```
+
+Now we can estimate the three models with the mean centered variables. 
+
+```{r, eval = FALSE}
+* Estimate Cox model with exact discrete
+
+eststo clear 
+
+eststo: stcox pbalmean ctg ali idemmean tdemmean break, nohr exactp
+
+* Estimate a conditional logit through clogit. Should have same results as the Cox model with exact discrete, but with some dropped observations. We do not include this model in the final regression output.
+
+clogit event ctg ali idem tdem pbal break, group(durmths)
+
+* Estimate Logit Model with Lowess Term
+
+eststo: logit _d lowesst2 pbalmean ctg ali idemmean tdemmean break
+
+* Now estimate Weibull for comparison
+
+eststo: streg pbalmean ctg ali idemmean tdemmean break, nohr dist(weib)
+
+```
+
+We can generate the regression table for the three models. 
+
+```{r, eval = FALSE}
+* Reset working directory to collect following output 
+
+cd ~/Dropbox/github/liwu-gan.github.io/chapter5
+
+* Generate regression table output 
+
+esttab using ch5_log_weib.html, replace ///
+	coeflabel(	lowesst2 "Duration Dependency" 	ctg "Territorial Contiguity" ///
+	             ali "Intervenor Allied to Target" idemmean "Intervenor Democracy" ///
+	             tdemmean "Target Democracy" pbalmean "Relative Capabilities" ///
+				 break "Breakdown of Authority" _cons "Constant") ///
+	title(Models of Militarized Interventions) ///
+	mtitles("Conditional Logit" "Logit" "Weibull") ///
+	eqlabels("", none) ///
+	b(2) se(2) nostar ///
+	stats(ll N, label("Log-Likelihood" "<em>N</em>") fmt(2 0)) 
+  
+```
+
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter5/ch5_log_weib.png){}

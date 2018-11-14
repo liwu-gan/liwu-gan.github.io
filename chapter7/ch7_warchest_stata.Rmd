@@ -1,0 +1,72 @@
+---
+title: 'Warchest Data in Stata'
+output: html_document
+---
+
+```{r, eval = FALSE, echo = FALSE}
+
+clear
+set more off
+
+```
+
+Let's load the dataset. Because we are dealing with TVCs, we want to convert the data into start and stop time format. Creating the start variable invovles  lagging the 'te' variable and replacing the missing values with 0. The 'te' variable represents the stop time. Once we have the data in the right format, we can stset the data for analysis. 
+
+```{r, eval = FALSE}
+
+* Dataset is warchest.dta 
+
+use "~/Dropbox/github/liwu-gan.github.io/dta/warchest.dta"
+
+* Create a lagged variable and replace the missing values with 0
+
+by caseid: gen start = te[_n-1]
+
+replace start = 0 if missing(start)
+
+* Prepare data for analysis 
+
+stset te, failure(cut_hi) time0(start)
+```
+
+
+### Tables 7.4 and 7.5
+
+I run the Cox and Weibull propotional hazard models. 
+```{r, eval = FALSE}
+
+* Estimate Cox model with Breslow ties
+
+eststo clear
+
+eststo: stcox south dem iv ec, nohr breslow
+
+* Estimate Weibull proportional hazards model  
+
+eststo: streg south dem iv ec, dist(weib) nohr
+
+```
+
+We can generate the results in a table now. 
+
+```{r, eval = FALSE}
+
+* Reset working directory to collect following output 
+
+cd ~/Dropbox/github/liwu-gan.github.io/chapter7
+
+* Generate regression table output 
+
+esttab using ch7_warchest_cox_weib.html, replace ///
+	coeflabel(south "South" dem "Party" iv "Prior Vote" ///
+				ec "War Chest" _cons "Constant") ///
+	title(Cox and Weibull Models of Challenger Deterrence) ///
+	mtitles("Cox" "Weibull") ///
+	eqlabels("", none) ///
+	b(2) se(2) nostar ///
+	stats(ll N, label("Log-Likelihood" "<em>N</em>") fmt(2 0)) nogaps
+
+```
+
+![](~/Dropbox/github/liwu-gan.github.io/chapter7/ch7_warchest_cox_weib.png){}
+```

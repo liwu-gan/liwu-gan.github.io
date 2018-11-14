@@ -8,8 +8,6 @@ output: html_document
 clear
 set more off
 
-cd ~/Dropbox/event_history/dta
-
 ```
 
 Let's load the dataset. 
@@ -44,7 +42,7 @@ We can generate the results in a table now.
 ```{r, eval = FALSE}
 * Reset working directory to collect following output 
 
-cd ~/Dropbox/event_history/rmd
+cd ~/Dropbox/github/liwu-gan.github.io/chapter3
 
 * Generate regression table output 
 
