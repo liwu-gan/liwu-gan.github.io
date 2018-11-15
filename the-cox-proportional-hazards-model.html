@@ -148,12 +148,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html"><i class="fa fa-check"></i><b>7</b> Inclusion of Time-Varying Covariates</a><ul>
-<li class="chapter" data-level="7.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-stata"><i class="fa fa-check"></i><b>7.1</b> Warchest Data in Stata</a><ul>
-<li class="chapter" data-level="7.1.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#tables-7.4-and-7.5"><i class="fa fa-check"></i><b>7.1.1</b> Tables 7.4 and 7.5</a></li>
+<li class="chapter" data-level="7.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-r"><i class="fa fa-check"></i><b>7.1</b> Warchest Data in R</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.4"><i class="fa fa-check"></i><b>7.1.1</b> Table 7.4</a></li>
+<li class="chapter" data-level="7.1.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.5"><i class="fa fa-check"></i><b>7.1.2</b> Table 7.5</a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-r"><i class="fa fa-check"></i><b>7.2</b> Warchest Data in R</a><ul>
-<li class="chapter" data-level="7.2.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.4"><i class="fa fa-check"></i><b>7.2.1</b> Table 7.4</a></li>
-<li class="chapter" data-level="7.2.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.5"><i class="fa fa-check"></i><b>7.2.2</b> Table 7.5</a></li>
+<li class="chapter" data-level="7.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-stata"><i class="fa fa-check"></i><b>7.2</b> Warchest Data in Stata</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#tables-7.4-and-7.5"><i class="fa fa-check"></i><b>7.2.1</b> Tables 7.4 and 7.5</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html"><i class="fa fa-check"></i><b>8</b> Diagnostic Methods for the Event History Model</a><ul>
@@ -681,9 +681,7 @@ esttab using ch4_cox.html, replace <span class="op">/</span><span class="er">//<
 <span class="st">    </span><span class="kw">mtitles</span>(<span class="st">&quot;Breslow&quot;</span> <span class="st">&quot;Efron&quot;</span> <span class="st">&quot;Avg. Lik.&quot;</span> <span class="st">&quot;Exact&quot;</span>) <span class="op">/</span><span class="er">//</span>
 <span class="st">    </span><span class="kw">eqlabels</span>(<span class="st">&quot;&quot;</span>, none) <span class="op">/</span><span class="er">//</span>
 <span class="st">    </span><span class="kw">b</span>(<span class="dv">2</span>) <span class="kw">se</span>(<span class="dv">2</span>) nostar <span class="op">/</span><span class="er">//</span>
-<span class="st">    </span><span class="kw">stats</span>(ll N, <span class="kw">label</span>(<span class="st">&quot;Log-Likelihood&quot;</span> <span class="st">&quot;&lt;em&gt;N&lt;/em&gt;&quot;</span>) <span class="kw">fmt</span>(<span class="dv">2</span> <span class="dv">0</span>)) 
-    
-eststo clear</code></pre></div>
+<span class="st">    </span><span class="kw">stats</span>(ll N, <span class="kw">label</span>(<span class="st">&quot;Log-Likelihood&quot;</span> <span class="st">&quot;&lt;em&gt;N&lt;/em&gt;&quot;</span>) <span class="kw">fmt</span>(<span class="dv">2</span> <span class="dv">0</span>)) </code></pre></div>
 <div class="figure">
 <img src="chapter4/ch4_cox.png" />
 
@@ -791,7 +789,7 @@ gen inthaz_baseweib=<span class="op">-</span><span class="kw">log</span>(surv_ba
 <span class="st">    </span><span class="kw">scheme</span>(s2mono) <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="kw">icolor</span>(none)) <span class="op">/</span><span class="er">//</span>
 <span class="st">    </span><span class="kw">saving</span>(ch4_cabcoxht.gph, replace)</code></pre></div>
 <p>Now we can combine all three graphs and export to a .png file</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">graph combine cabcoxst.gph cabcoxinthaz.gph cabcoxht.gph, <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="op">/</span><span class="er">//</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">graph combine ch4_cabcoxst.gph ch4_cabcoxinthaz.gph ch4_cabcoxht.gph, <span class="kw">graphregion</span>(<span class="kw">color</span>(white) <span class="op">/</span><span class="er">//</span>
 <span class="kw">icolor</span>(none)) <span class="kw">saving</span>(ch4_cabcoxbase.gph, replace)
 
 graph export ch4_cabcoxbase.png, replace</code></pre></div>
