@@ -58,8 +58,6 @@ esttab using ch4_cox.html, replace ///
 	b(2) se(2) nostar ///
 	stats(ll N, label("Log-Likelihood" "<em>N</em>") fmt(2 0)) 
 	
-eststo clear
-
 ```
 ![](~/Dropbox/github/liwu-gan.github.io/chapter4/ch4_cox.png){}
 
@@ -205,7 +203,7 @@ Now we can combine all three graphs and export to a .png file
 
 ```{r, eval = FALSE}
 
-graph combine cabcoxst.gph cabcoxinthaz.gph cabcoxht.gph, graphregion(color(white) ///
+graph combine ch4_cabcoxst.gph ch4_cabcoxinthaz.gph ch4_cabcoxht.gph, graphregion(color(white) ///
 icolor(none)) saving(ch4_cabcoxbase.gph, replace)
 
 graph export ch4_cabcoxbase.png, replace
