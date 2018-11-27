@@ -51,6 +51,5 @@ This chapter makes use of the cabinet data used in the previous chapter.
 
 ```
 
-Knitting the event_history.rmd file results in an html file, which I rename to index.html as Github Pages makes use of an index.html file as the site’s homepage. Each of the other html files are the individual chapters that were created as a result of knitting the master file. Each chapter’s .rmd files, as well as any tables or figures, are located in the appropriately numbered chapter folder 
-
+Knitting the event_history.rmd file results in the master html file, which I rename to index.html as is customary when using Github Paes. Each of the other html files are the individual chapters that were created as a result of knitting the master file. Each chapter’s .rmd files, as well as any tables or figures, are located in the appropriately numbered chapter folder 
 The dta folder is where all the data files are locate. 
