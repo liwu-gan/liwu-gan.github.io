@@ -8,7 +8,7 @@ To replicate the contents of the repository, first download the folder and unzip
 
 ## Files Information
  
-The site makes use of a master, or “parent,” .rmd file, within which each of the individual chapters of the book are “child” .rmd files. Each child .rmd file, along with any tables or figures called within the file, are located in the appropriately numbered chapter folder. When rendering, or knitting, the parent .rmd file, each of the child .rmd files are also knitted, making it seamless to incorporate all the contents. 
+The site makes use of a master, or “parent,” .rmd file, within which each of the individual chapters of the book are “child” .rmd files. Each child .rmd file, along with any tables or figures called within the file, are located in the appropriately numbered chapter folder (e.g. chapter 4). When rendering, or knitting, the parent .rmd file, each of the child .rmd files are also knitted, making it seamless to incorporate all the contents. 
 
 The parent .rmd file is event_history.rmd. Within the event_history.rmd file, we can see the top part of the document sets the format for the output, which uses the R package Bookdown. 
 
