@@ -1,6 +1,6 @@
 # Event History Modeling
 
-This is the website for the book, Event History Modeling: A Guide for Social Scientists by Janet M. Box-Steffensmeier, Bradford S. Jones, and David Darmofal, which can be located here (link). It replicates tables and figures from the book in both R and Stata. The website was created using the R package, Bookdown (https://bookdown.org/yihui/bookdown/), which is built on top of R Markdown (https://rmarkdown.rstudio.com/). R Markdown files, which have the .rmd extension, allow users to compile html documents for the web. The readme file will explain how to replicate the contents of the website as well as describe each of the files. 
+This is the website for the book, Event History Modeling: A Guide for Social Scientists by Janet M. Box-Steffensmeier, Bradford S. Jones, and David Darmofal, which can be located [here](liwu-gan.github.io). It replicates tables and figures from the book in both R and Stata. The website was created using the R package, Bookdown (https://bookdown.org/yihui/bookdown/), which is built on top of R Markdown (https://rmarkdown.rstudio.com/). R Markdown files, which have the .rmd extension, allow users to compile html documents for the web. The readme file will explain how to replicate the contents of the website as well as describe each of the files. 
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ To replicate the contents of the repository, first download the folder and unzip
 
 ## Files Information
  
-The site makes use of a master, or “parent,” .rmd file, within which each of the individual chapters of the book are “child” .rmd files. When rendering, or knitting, the parent .rmd file, each of the child .rmd files are also knitted, making it seamless to incorporate all the contents. 
+The site makes use of a master, or “parent,” .rmd file, within which each of the individual chapters of the book are “child” .rmd files. Each child .rmd file, along with any tables or figures called within the file, are located in the appropriately numbered chapter folder. When rendering, or knitting, the parent .rmd file, each of the child .rmd files are also knitted, making it seamless to incorporate all the contents. 
 
 The parent .rmd file is event_history.rmd. Within the event_history.rmd file, we can see the top part of the document sets the format for the output, which uses the R package Bookdown. 
 
@@ -51,5 +51,4 @@ This chapter makes use of the cabinet data used in the previous chapter.
 
 ```
 
-Knitting the event_history.rmd file results in the master html file, which I rename to index.html as is customary when using Github Pages. Each of the other html files are the individual chapters that were created as a result of knitting the master file. Each chapter’s .rmd files, as well as any tables or figures, are located in the appropriately numbered chapter folder. 
-The dta folder is where all the data files are located. 
+Knitting the event_history.rmd file results in the master html file, which I rename to index.html as is customary when using Github Pages. Each of the other html files are the individual chapters that were created as a result of knitting the master file. The dta folder is where all the data files are located. 
