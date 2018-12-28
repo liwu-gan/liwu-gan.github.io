@@ -21,7 +21,7 @@ description: "This is a minimal example of using the bookdown package to write a
 
 # Parametric Models for Single-Spell Duration Data 
 
-This chapter makes use of two different datasets: data on the duration of UN peacekeeping operations from 1948-2001 (originally used in Green et al. 1998) and data on the duration of European cabinet governments from King et al. 1990. Each of the figures and tables are replicated in both R and Stata. Let's start with the UN data in R and Stata first, and then move on to the cabinet data in R and Stata. 
+This chapter makes use of two different datasets: data on the duration of UN peacekeeping operations from 1948-2001 (originally used in Green et al. 1998) and data on the duration of European cabinet governments from King et al. 1990. We will start with the UN data in R and Stata first, and then move on to the cabinet data in R and Stata. 
 
 ## UN Data in R 
 
@@ -65,7 +65,7 @@ This chapter makes use of the cabinet data used in the previous chapter.
 
 # Models for Discrete Data 
 
-This chapter makes use of the International Military Interventions (IMI) dataset that has information on the duration of militarized interventions from 1946-1988 and a variety of covariates (from Pearson and Baumann 1993).
+This chapter makes use of the International Military Interventions (IMI) dataset that has information on the duration of militarized interventions from 1946-1988 and a variety of covariates (from Pearson and Baumann 1993). Discrete data records the dependent variable as a binary outcome that either occurs or not at a specified time point. Scholars who care about the effect of time on the outcome include a variety of temporal dependences in their models, such as splines (Beck, Katz, and Tucker 1998) or time dummies. While the Beck, Katz, and Tucker splines were used extensively in the 1990s and 2000s, recent work typically makes use of cubic polynomials which are very straightforward: adding $t$, $t^2$, and $t^3$ to the regression (Carter and Signorino 2010). The advantage of cubic polynomials is that they are much simpler to implement and perform just as well as Beck, Katz, and Tucker splines. 
 
 ## Militarized Interventions Data in R
 

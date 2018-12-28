@@ -148,12 +148,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html"><i class="fa fa-check"></i><b>7</b> Inclusion of Time-Varying Covariates</a><ul>
-<li class="chapter" data-level="7.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-stata"><i class="fa fa-check"></i><b>7.1</b> Warchest Data in Stata</a><ul>
-<li class="chapter" data-level="7.1.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#tables-7.4-and-7.5"><i class="fa fa-check"></i><b>7.1.1</b> Tables 7.4 and 7.5</a></li>
+<li class="chapter" data-level="7.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-r"><i class="fa fa-check"></i><b>7.1</b> Warchest Data in R</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.4"><i class="fa fa-check"></i><b>7.1.1</b> Table 7.4</a></li>
+<li class="chapter" data-level="7.1.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.5"><i class="fa fa-check"></i><b>7.1.2</b> Table 7.5</a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-r"><i class="fa fa-check"></i><b>7.2</b> Warchest Data in R</a><ul>
-<li class="chapter" data-level="7.2.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.4"><i class="fa fa-check"></i><b>7.2.1</b> Table 7.4</a></li>
-<li class="chapter" data-level="7.2.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#table-7.5"><i class="fa fa-check"></i><b>7.2.2</b> Table 7.5</a></li>
+<li class="chapter" data-level="7.2" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#warchest-data-in-stata"><i class="fa fa-check"></i><b>7.2</b> Warchest Data in Stata</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="inclusion-of-time-varying-covariates.html"><a href="inclusion-of-time-varying-covariates.html#tables-7.4-and-7.5"><i class="fa fa-check"></i><b>7.2.1</b> Tables 7.4 and 7.5</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="diagnostic-methods-for-the-event-history-model.html"><a href="diagnostic-methods-for-the-event-history-model.html"><i class="fa fa-check"></i><b>8</b> Diagnostic Methods for the Event History Model</a><ul>
@@ -202,7 +202,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="models-for-discrete-data" class="section level1">
 <h1><span class="header-section-number">5</span> Models for Discrete Data</h1>
-<p>This chapter makes use of the International Military Interventions (IMI) dataset that has information on the duration of militarized interventions from 1946-1988 and a variety of covariates (from Pearson and Baumann 1993).</p>
+<p>This chapter makes use of the International Military Interventions (IMI) dataset that has information on the duration of militarized interventions from 1946-1988 and a variety of covariates (from Pearson and Baumann 1993). Discrete data records the dependent variable as a binary outcome that either occurs or not at a specified time point. Scholars who care about the effect of time on the outcome include a variety of temporal dependences in their models, such as splines (Beck, Katz, and Tucker 1998) or time dummies. While the Beck, Katz, and Tucker splines were used extensively in the 1990s and 2000s, recent work typically makes use of cubic polynomials which are very straightforward: adding <span class="math inline">\(t\)</span>, <span class="math inline">\(t^2\)</span>, and <span class="math inline">\(t^3\)</span> to the regression (Carter and Signorino 2010). The advantage of cubic polynomials is that they are much simpler to implement and perform just as well as Beck, Katz, and Tucker splines.</p>
 <div id="militarized-interventions-data-in-r" class="section level2">
 <h2><span class="header-section-number">5.1</span> Militarized Interventions Data in R</h2>
 <p>Note that for two of the models, the replication of Table 5.3 will be based on the smaller dataset (which I name “imi”) than the one shown in Stata and in the book. This is because the exact discrete Cox model using the larger dataset (“imi2”) is too computionally intense for R to estimate within a reasonable time. In addition, the Weibull model cannot handle start-stop Surv objects. Nevertheless, the results using the smaller dataset are essentially the same so I still reproduce them below.</p>
@@ -626,6 +626,19 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
