@@ -1,6 +1,6 @@
 # Event History Modeling
 
-This is the website for the book, Event History Modeling: A Guide for Social Scientists by Janet M. Box-Steffensmeier, Bradford S. Jones, and David Darmofal, which can be located at: liwu-gan.github.io. It replicates tables and figures from the book in both R and Stata. The website was created using the R package, Bookdown (https://bookdown.org/yihui/bookdown/), which is built on top of R Markdown (https://rmarkdown.rstudio.com/). R Markdown files, which have the .rmd extension, allow users to compile html documents for the web. The readme file will explain how to replicate the contents of the website as well as describe each of the files. 
+This is the website for the book, Event History Modeling: A Guide for Social Scientists by Janet M. Box-Steffensmeier, Bradford S. Jones, and David Darmofal, which can be located at: http://eventhistorymodeling.com. It replicates tables and figures from the book in both R and Stata. The website was created using the R package, Bookdown (https://bookdown.org/yihui/bookdown/), which is built on top of R Markdown (https://rmarkdown.rstudio.com/). R Markdown files, which have the .rmd extension, allow users to compile html documents for the web. The readme file will explain how to replicate the contents of the website as well as describe each of the files. 
 
 ## Getting Started
 
